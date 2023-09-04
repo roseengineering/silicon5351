@@ -61,16 +61,7 @@ Instantiate the SI5353\_I2C class.
 
 Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following public properties and methods:   
 
-<code>SI5351\_I2C.<b>disabled\_state</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
-Set the state of each clock output (clkout) when disabled.
-The possible disabled states for an output are low, high, high impedance, and never disabled.  
-**s0..s7** The disabled state to set for the appropriate output.  Must use a predefined library constant for each of the state values in the list.  
-
-<code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
-Disable the output enable pin (OEB) for the given clock outputs (clkout).  
-**mask** A bit mask of the clock outputs to disable OEB pin support for.  
-
-<code>SI5351\_I2C.<b>enable\_output</b>(self, mask)</code>  
+<code>SI5351\_I2C.<b>enable\_outputs</b>(self, mask)</code>  
 Enable the given clock outputs (clkout).  
 **mask** A bit mask of the clock outputs to enable.  
 
@@ -98,5 +89,14 @@ Set the frequency for the clock output (clkout).
 Must call init\_clock() and setup\_pll() before calling this method.  
 **output** The number of the clock output to set the frequency for.  
 **freq** The frequency in Hz to set the clock output to.  
+
+<code>SI5351\_I2C.<b>disabled\_state</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
+Set the state of each clock output (clkout) when disabled.
+The possible disabled states for an output are low, high, high impedance, and never disabled.  
+**s0..s7** The disabled state to set for the appropriate clock output.  Must use the predefined library constants for the state values.  
+
+<code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
+Disable the output enable pin (OEB) for the given clock outputs (clkout).  
+**mask** A bit mask of the clock outputs to disable OEB pin support for.  
 
 

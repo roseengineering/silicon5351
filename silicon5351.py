@@ -87,21 +87,7 @@ class SI5351_I2C:
         values = [ self.SI5351_CLK_POWERDOWN ] * 8
         self.write_bulk(self.SI5351_REGISTER_CLK0_CONTROL, values)
 
-    def disabled_state(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
-        """Set the state of each clock output (clkout) when disabled.
-        The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param s0..s7 The disabled state to set for the appropriate output.  Must use a predefined library constant for each of the state values in the list.
-        """
-        self.write(self.SI5351_REGISTER_DIS_STATE_1, s3 << 6 | s2 << 4 | s1 << 2 | s0)
-        self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
-
-    def disable_oeb(self, mask):
-        """Disable the output enable pin (OEB) for the given clock outputs (clkout).
-        :param mask A bit mask of the clock outputs to disable OEB pin support for.
-        """
-        self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
-
-    def enable_output(self, mask):
+    def enable_outputs(self, mask):
         """Enable the given clock outputs (clkout).
         :param mask A bit mask of the clock outputs to enable.
         """
@@ -167,6 +153,20 @@ class SI5351_I2C:
             self.reset_pll(pll) # syncs all clocks derived from this pll 
             self.div[output] = div
 
+    def disabled_state(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
+        """Set the state of each clock output (clkout) when disabled.
+        The possible disabled states for an output are low, high, high impedance, and never disabled.
+        :param s0..s7 The disabled state to set for the appropriate clock output.  Must use the predefined library constants for the state values.
+        """
+        self.write(self.SI5351_REGISTER_DIS_STATE_1, s3 << 6 | s2 << 4 | s1 << 2 | s0)
+        self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
+
+    def disable_oeb(self, mask):
+        """Disable the output enable pin (OEB) for the given clock outputs (clkout).
+        :param mask A bit mask of the clock outputs to disable OEB pin support for.
+        """
+        self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
+
     def set_phase(self, output, div):
         # print('phase',output,div)
         self.write(self.SI5351_REGISTER_CLK0_PHOFF + output, int(div) & 0xFF)
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     si.setup_pll(pll=0, mult=mult)
     si.set_freq(output=0, freq=freq) 
     si.set_freq(output=1, freq=freq) 
-    si.enable_output(0x3)
+    si.enable_outputs(0x3)
 
     # led
     led_blue = machine.Pin(25, machine.Pin.OUT)
