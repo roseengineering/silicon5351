@@ -49,7 +49,7 @@ def generate_docs(package, data=None, classname=None, text=[]):
                     text.append(ln.strip())
             text.append('')
             if k == '__init__':
-                text.append(f'Instances of the <code>{package}.<b>{classname}</b></code> class have the following properties and methods:   ')
+                text.append(f'Instances of the <code>{package}.<b>{classname}</b></code> class have the following public properties and methods:   ')
                 text.append('')
     text = [ ln.replace('_', '\_') for ln in text ]
     return '\n'.join(text)

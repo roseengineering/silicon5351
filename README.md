@@ -59,7 +59,7 @@ Instantiate the SI5353\_I2C class.
 **load** The load capacitance of crystal.  Must use a predefined library constant for this capacitance value.  
 **address** The I2C address of the si5351 chip.  
 
-Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following properties and methods:   
+Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following public properties and methods:   
 
 <code>SI5351\_I2C.<b>disabled\_state</b>(state)</code>  
 Set the state of each clock output when disabled.
