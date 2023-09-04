@@ -153,7 +153,7 @@ class SI5351_I2C:
             self.reset_pll(pll) # syncs all clocks derived from this pll 
             self.div[output] = div
 
-    def disabled_state(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
+    def disabled_states(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
         """Set the state of each clock output (clkout) when disabled.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
         :param s0..s7 The disabled state to set for the appropriate clock output.  Must use the predefined library constants for the state values.

@@ -90,7 +90,7 @@ Must call init\_clock() and setup\_pll() before calling this method.
 **output** The number of the clock output to set the frequency for.  
 **freq** The frequency in Hz to set the clock output to.  
 
-<code>SI5351\_I2C.<b>disabled\_state</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
+<code>SI5351\_I2C.<b>disabled\_states</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
 Set the state of each clock output (clkout) when disabled.
 The possible disabled states for an output are low, high, high impedance, and never disabled.  
 **s0..s7** The disabled state to set for the appropriate clock output.  Must use the predefined library constants for the state values.  
