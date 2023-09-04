@@ -68,11 +68,11 @@ class SI5351_I2C:
             (P2 & 0x000FF) ])
 
     def __init__(self, i2c, crystal, load, address=SI5351_I2C_ADDRESS_DEFAULT):
-        """Instantiate SI5353_I2C class.
-        :param i2c the micropython I2C object.
-        :param crystal the crystal frequency in Hz.
-        :param load the load capacitance of crystal.  Must use a predefined library constant for this capacitance value.
-        :param address the I2C address of the si5351 chip. 
+        """Instantiate the SI5353_I2C class.
+        :param i2c The micropython I2C object.
+        :param crystal The crystal frequency in Hz.
+        :param load The load capacitance of crystal.  Must use a predefined library constant for this capacitance value.
+        :param address The I2C address of the si5351 chip. 
         """
         self.i2c = i2c
         self.crystal = crystal
@@ -90,7 +90,7 @@ class SI5351_I2C:
     def disabled_state(state):
         """Set the state of each clock output when disabled.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param state a list of states ordered by clock output (clkout) number.  Must use a predefined library constant for this state value.
+        :param state A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for this state value.
         """
         d = [ state[i] if i < len(state) else 0 for i in range(8) ]
         state_1 = d[3] << 6 | d[2] << 4 | d[1] << 2 | d[0]
@@ -100,13 +100,13 @@ class SI5351_I2C:
 
     def disable_oeb(self, mask):
         """Disable the output enable pin (OEB) for the clocks.
-        :param mask a bit mask of the clock outputs (clkout) to disable OEB pin support for.
+        :param mask A bit mask of the clock outputs (clkout) to disable OEB pin support for.
         """
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
     def enable_output(self, mask):
         """Enable the clock output pins 
-        :param mask a bit mask of the clock outputs (clkout) to enable.
+        :param mask A bit mask of the clock outputs (clkout) to enable.
         """
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)
 
@@ -116,12 +116,12 @@ class SI5351_I2C:
         """Initialize the given clock output
         This method must be called before using set_freq() on the output since 
         the library needs to know if the output has been setup for quadrature mode.
-        :param output the number of the clock output (clkout) to initialize 
-        :param pll the number of the PLL to select. (0=PLLA, 1=PLLB)
-        :param invert whether the output should be inverted.
-        :param quadrature enable quadrature output for the output.
-        :param integer_mode enable integer mode (MS or PLL) for the output.
-        :param drive_strength the drive strength in current to use for the output.  Must usea predefined library constant for this current value.
+        :param output The number of the clock output (clkout) to initialize 
+        :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
+        :param invert Whether the output should be inverted.
+        :param quadrature Whether to enable quadrature output for this output.
+        :param integer_mode Whether to enable integer mode (MS or PLL) for this output.
+        :param drive_strength The drive strength in current to use for the output.  Must usea predefined library constant for this current value.
         """
         value = drive_strength 
         value |= self.SI5351_CLK_INPUT_MULTISYNTH_N
@@ -135,10 +135,11 @@ class SI5351_I2C:
 
     def setup_pll(self, pll, mult, num=0, denom=1):
         """Set the frequency for the given PLL.
-        :param pll the number of the PLL to select. (0=PLLA, 1=PLLB)
-        :param mult the whole number to multiply the crystal frequency by.  This value must be in the range [15-90].
-        :param num the numerator to multiply the crystal frequency by. This value must be in the range [0-1048575).
-        :param denom the denominator to multiply the crystal frequency by. This value must be in the range (0-1048575].
+        The PLL frequency is set to the frequency given by (whole + num / denom) times the crystal frequency.
+        :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
+        :param mult The whole number to multiply the crystal frequency by.  This value must be in the range [15-90].
+        :param num The numerator to multiply the crystal frequency by. This value must be in the range [0-1048575).
+        :param denom The denominator to multiply the crystal frequency by. This value must be in the range (0-1048575].
         """
         # print('setup_pll',pll,mult,'+',num,'/',denom)
         vco = self.crystal * (mult + num / denom)
@@ -149,11 +150,10 @@ class SI5351_I2C:
 
     def set_freq(self, output, freq):
         """Set the frequency for the clock output
-        Must call init_clock() and setup_pll() for calling this method.
-        :param output the number of the clock output (clkout) to set frequency for.
-        :param freq the frequency to set in Hz.
+        Must call init_clock() and setup_pll() before calling this method.
+        :param output The number of the clock output (clkout) to set the frequency for.
+        :param freq The frequency in Hz to set the clock output to.
         """
-        # must call setup_clock() before this method to set quadrature mode
         # print('set_freq',output,pll,freq,'vco=',self.vco[pll],'div=',self.vco[pll]/freq)
         pll = self.pll[output]
         vco = self.vco[pll]
