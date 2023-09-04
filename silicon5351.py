@@ -89,7 +89,7 @@ class SI5351_I2C:
 
     def enable_outputs(self, mask):
         """Enable the given clock outputs (clkout).
-        :param mask A bit mask of the clock outputs to enable.
+        :param mask A bit mask of the clock outputs to enable.  The nonenabled outputs are disabled.
         """
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)
 

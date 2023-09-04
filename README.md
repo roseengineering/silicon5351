@@ -63,7 +63,7 @@ Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the foll
 
 <code>SI5351\_I2C.<b>enable\_outputs</b>(self, mask)</code>  
 Enable the given clock outputs (clkout).  
-**mask** A bit mask of the clock outputs to enable.  
+**mask** A bit mask of the clock outputs to enable.  The nonenabled outputs are disabled.  
 
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
 Initialize the given clock output (clkout).
