@@ -1,10 +1,10 @@
 
-# silicon
+# silicon5351
 
 A micropython library for controlling the si5351 chip 
 and with quadrature output support.
 
-# introduction
+# Introduction
 
 The library file silicon5351.py provides the class SI5351\_I2C
 which you can use to control the Silicon Labs SI5351x range of chips.
