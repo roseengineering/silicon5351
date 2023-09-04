@@ -48,6 +48,7 @@ si.setup_pll(pll=0, mult=mult)
 si.set_freq(output=0, freq=freq) 
 si.set_freq(output=1, freq=freq) 
 si.enable_outputs(0x3)
+print('done')
 ```
 
 ## API
@@ -63,7 +64,7 @@ Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the foll
 
 <code>SI5351\_I2C.<b>enable\_outputs</b>(self, mask)</code>  
 Enable the given clock outputs (clkout).  
-**mask** A bit mask of the clock outputs to enable.  The nonenabled outputs are disabled.  
+**mask** A bit mask of the clock outputs to enable.  The non-enabled outputs are disabled.  
 
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
 Initialize the given clock output (clkout).
