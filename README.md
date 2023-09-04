@@ -47,7 +47,7 @@ si.init_clock(output=1, pll=0, quadrature=quadrature)
 si.setup_pll(pll=0, mult=mult)
 si.set_freq(output=0, freq=freq) 
 si.set_freq(output=1, freq=freq) 
-si.enable_output(0x3)
+si.enable_outputs(0x3)
 ```
 
 ## API
