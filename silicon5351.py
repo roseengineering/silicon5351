@@ -87,36 +87,33 @@ class SI5351_I2C:
         values = [ self.SI5351_CLK_POWERDOWN ] * 8
         self.write_bulk(self.SI5351_REGISTER_CLK0_CONTROL, values)
 
-    def disabled_state(state):
-        """Set the state of each clock output when disabled.
+    def disabled_state(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
+        """Set the state of each clock output (clkout) when disabled.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param state A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each of the state values in the list.
+        :param s0..s7 The disabled state to set for the appropriate output.  Must use a predefined library constant for each of the state values in the list.
         """
-        d = [ state[i] if i < len(state) else 0 for i in range(8) ]
-        state_1 = d[3] << 6 | d[2] << 4 | d[1] << 2 | d[0]
-        state_2 = d[7] << 6 | d[6] << 4 | d[5] << 2 | d[4]
-        self.write(self.SI5351_REGISTER_DIS_STATE_1, state_1)
-        self.write(self.SI5351_REGISTER_DIS_STATE_2, state_2)
+        self.write(self.SI5351_REGISTER_DIS_STATE_1, s3 << 6 | s2 << 4 | s1 << 2 | s0)
+        self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
 
     def disable_oeb(self, mask):
-        """Disable the output enable pin (OEB) for the given clock outputs.
-        :param mask A bit mask of the clock outputs (clkout) to disable OEB pin support for.
+        """Disable the output enable pin (OEB) for the given clock outputs (clkout).
+        :param mask A bit mask of the clock outputs to disable OEB pin support for.
         """
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
     def enable_output(self, mask):
-        """Enable the given clock outputs.
-        :param mask A bit mask of the clock outputs (clkout) to enable.
+        """Enable the given clock outputs (clkout).
+        :param mask A bit mask of the clock outputs to enable.
         """
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)
 
     def init_clock(self, output, pll, 
                    quadrature=False, invert=False, integer_mode=False,
                    drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
-        """Initialize the given clock output.
+        """Initialize the given clock output (clkout).
         This method must be called before using set_freq() on the output since 
         the library needs to know if the output has been setup for quadrature mode.
-        :param output The number of the clock output (clkout) to initialize 
+        :param output The number of the clock output to initialize 
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
         :param invert Whether the output should be inverted.
         :param quadrature Whether to enable quadrature output for this output.
@@ -150,9 +147,9 @@ class SI5351_I2C:
         self.vco[pll] = vco
 
     def set_freq(self, output, freq):
-        """Set the frequency for the clock output.
+        """Set the frequency for the clock output (clkout).
         Must call init_clock() and setup_pll() before calling this method.
-        :param output The number of the clock output (clkout) to set the frequency for.
+        :param output The number of the clock output to set the frequency for.
         :param freq The frequency in Hz to set the clock output to.
         """
         # print('set_freq',output,pll,freq,'vco=',self.vco[pll],'div=',self.vco[pll]/freq)
@@ -220,14 +217,13 @@ if __name__ == '__main__':
     si = SI5351_I2C(i2c, crystal=crystal, load=load)
 
     mult = 32
-    freq = 6.30e6  # 126.9
-    freq = 6.2987e6 # 127.01
-    freq = 6.251e6 # 127.9
-    freq = 100e3
+    freq = 6.251e6  # divisor = 127.9
+    freq = 6.2987e6 # divisor = 127.01
+    freq = 6.30e6   # divisor = 126.9
     quadrature = True
-    quadrature = False
     si.init_clock(output=0, pll=0)
-    si.init_clock(output=1, pll=0, quadrature=quadrature) #, invert=True)
+    si.init_clock(output=1, pll=0, quadrature=True)
+    # si.init_clock(output=1, pll=0, invert=True)
     si.setup_pll(pll=0, mult=mult)
     si.set_freq(output=0, freq=freq) 
     si.set_freq(output=1, freq=freq) 
