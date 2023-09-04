@@ -130,6 +130,7 @@ class SI5351_I2C:
         if pll == 0: value |= self.SI5351_CLK_PLL_SELECT_A
         if pll == 1: value |= self.SI5351_CLK_PLL_SELECT_B
         self.write(self.SI5351_REGISTER_CLK0_CONTROL + output, value)
+        self.set_phase(output, 0)
         self.quadrature[output] = quadrature
         self.pll[output] = pll
 
@@ -165,11 +166,11 @@ class SI5351_I2C:
         num, denom = self.approximate_fraction(vco % freq, freq, max_denom)
         self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv) # do first
         if self.div.get(output) != div:
-            if self.quadrature[output]: self.shift_phase(output, div)
+            if self.quadrature[output]: self.set_phase(output, div)
             self.reset_pll(pll) # syncs all clocks derived from this pll 
             self.div[output] = div
 
-    def shift_phase(self, output, div):
+    def set_phase(self, output, div):
         # print('phase',output,div)
         self.write(self.SI5351_REGISTER_CLK0_PHOFF + output, int(div) & 0xFF)
 
