@@ -90,7 +90,7 @@ class SI5351_I2C:
     def disabled_state(state):
         """Set the state of each clock output when disabled.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param state A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for this state value.
+        :param state A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each state value in the list.
         """
         d = [ state[i] if i < len(state) else 0 for i in range(8) ]
         state_1 = d[3] << 6 | d[2] << 4 | d[1] << 2 | d[0]
@@ -105,7 +105,7 @@ class SI5351_I2C:
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
     def enable_output(self, mask):
-        """Enable the clock output pins 
+        """Enable the clock output pins.
         :param mask A bit mask of the clock outputs (clkout) to enable.
         """
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)
@@ -113,7 +113,7 @@ class SI5351_I2C:
     def init_clock(self, output, pll, 
                    quadrature=False, invert=False, integer_mode=False,
                    drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
-        """Initialize the given clock output
+        """Initialize the given clock output.
         This method must be called before using set_freq() on the output since 
         the library needs to know if the output has been setup for quadrature mode.
         :param output The number of the clock output (clkout) to initialize 
@@ -121,7 +121,7 @@ class SI5351_I2C:
         :param invert Whether the output should be inverted.
         :param quadrature Whether to enable quadrature output for this output.
         :param integer_mode Whether to enable integer mode (MS or PLL) for this output.
-        :param drive_strength The drive strength in current to use for the output.  Must usea predefined library constant for this current value.
+        :param drive_strength The drive strength in current to use for the output.  Must use a predefined library constant for this current value.
         """
         value = drive_strength 
         value |= self.SI5351_CLK_INPUT_MULTISYNTH_N
@@ -149,7 +149,7 @@ class SI5351_I2C:
         self.vco[pll] = vco
 
     def set_freq(self, output, freq):
-        """Set the frequency for the clock output
+        """Set the frequency for the clock output.
         Must call init_clock() and setup_pll() before calling this method.
         :param output The number of the clock output (clkout) to set the frequency for.
         :param freq The frequency in Hz to set the clock output to.

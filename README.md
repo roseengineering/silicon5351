@@ -64,18 +64,18 @@ Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the foll
 <code>SI5351\_I2C.<b>disabled\_state</b>(state)</code>  
 Set the state of each clock output when disabled.
 The possible disabled states for an output are low, high, high impedance, and never disabled.  
-**state** A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for this state value.  
+**state** A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each state value in the list.  
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
 Disable the output enable pin (OEB) for the clocks.  
 **mask** A bit mask of the clock outputs (clkout) to disable OEB pin support for.  
 
 <code>SI5351\_I2C.<b>enable\_output</b>(self, mask)</code>  
-Enable the clock output pins  
+Enable the clock output pins.  
 **mask** A bit mask of the clock outputs (clkout) to enable.  
 
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
-Initialize the given clock output
+Initialize the given clock output.
 This method must be called before using set\_freq() on the output since
 the library needs to know if the output has been setup for quadrature mode.  
 **output** The number of the clock output (clkout) to initialize   
@@ -83,7 +83,7 @@ the library needs to know if the output has been setup for quadrature mode.
 **invert** Whether the output should be inverted.  
 **quadrature** Whether to enable quadrature output for this output.  
 **integer\_mode** Whether to enable integer mode (MS or PLL) for this output.  
-**drive\_strength** The drive strength in current to use for the output.  Must usea predefined library constant for this current value.  
+**drive\_strength** The drive strength in current to use for the output.  Must use a predefined library constant for this current value.  
 
 <code>SI5351\_I2C.<b>setup\_pll</b>(self, pll, mult, num=0, denom=1)</code>  
 Set the frequency for the given PLL.
@@ -94,7 +94,7 @@ The PLL frequency is set to the frequency given by (whole + num / denom) times t
 **denom** The denominator to multiply the crystal frequency by. This value must be in the range (0-1048575].  
 
 <code>SI5351\_I2C.<b>set\_freq</b>(self, output, freq)</code>  
-Set the frequency for the clock output
+Set the frequency for the clock output.
 Must call init\_clock() and setup\_pll() before calling this method.  
 **output** The number of the clock output (clkout) to set the frequency for.  
 **freq** The frequency in Hz to set the clock output to.  
