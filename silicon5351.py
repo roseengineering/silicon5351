@@ -90,7 +90,7 @@ class SI5351_I2C:
     def disabled_state(state):
         """Set the state of each clock output when disabled.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param state A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each state value in the list.
+        :param state A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each of the state values in the list.
         """
         d = [ state[i] if i < len(state) else 0 for i in range(8) ]
         state_1 = d[3] << 6 | d[2] << 4 | d[1] << 2 | d[0]

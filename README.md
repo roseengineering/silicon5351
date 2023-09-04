@@ -64,7 +64,7 @@ Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the foll
 <code>SI5351\_I2C.<b>disabled\_state</b>(state)</code>  
 Set the state of each clock output when disabled.
 The possible disabled states for an output are low, high, high impedance, and never disabled.  
-**state** A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each state value in the list.  
+**state** A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each of the state values in the list.  
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
 Disable the output enable pin (OEB) for the clocks.  
