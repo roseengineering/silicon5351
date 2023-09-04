@@ -99,13 +99,13 @@ class SI5351_I2C:
         self.write(self.SI5351_REGISTER_DIS_STATE_2, state_2)
 
     def disable_oeb(self, mask):
-        """Disable the output enable pin (OEB) for the clocks.
+        """Disable the output enable pin (OEB) for the given clock outputs.
         :param mask A bit mask of the clock outputs (clkout) to disable OEB pin support for.
         """
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
     def enable_output(self, mask):
-        """Enable the clock output pins.
+        """Enable the given clock outputs.
         :param mask A bit mask of the clock outputs (clkout) to enable.
         """
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)

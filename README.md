@@ -67,11 +67,11 @@ The possible disabled states for an output are low, high, high impedance, and ne
 **state** A list of states ordered by clock output (clkout) number.  Must use a predefined library constant for each of the state values in the list.  
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
-Disable the output enable pin (OEB) for the clocks.  
+Disable the output enable pin (OEB) for the given clock outputs.  
 **mask** A bit mask of the clock outputs (clkout) to disable OEB pin support for.  
 
 <code>SI5351\_I2C.<b>enable\_output</b>(self, mask)</code>  
-Enable the clock output pins.  
+Enable the given clock outputs.  
 **mask** A bit mask of the clock outputs (clkout) to enable.  
 
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
