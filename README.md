@@ -53,18 +53,18 @@ print('done')
 
 ## API
 
-<code>class silicon5351.<b>SI5351\_I2C</b>(self, i2c, crystal, load, address=96)</code>  
-Instantiate the SI5353\_I2C class.  
+<code>class silicon5351.<b>SI5351\_I2C</b>(self, i2c, crystal, load=3, address=96)</code>  
+Instantiate the SI5353\_I2C class.  All clock outputs will be shutdown and disabled.  
 **i2c** The micropython I2C object.  
 **crystal** The crystal frequency in Hz.  
-**load** The load capacitance of crystal.  Must use a predefined library constant for this capacitance value.  
+**load** The load capacitance of crystal.  Must use one of the predefined library constant for this capacitance value.  
 **address** The I2C address of the si5351 chip.  
 
 Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following public properties and methods:   
 
 <code>SI5351\_I2C.<b>enable\_outputs</b>(self, mask)</code>  
-Enable the given clock outputs (clkout).  
-**mask** A bit mask of the clock outputs to enable.  The non-enabled outputs are disabled.  
+Enable the given clock outputs (clkout).  The unenabled clock outputs will be disabled.  
+**mask** A bit mask of the clock outputs to enable.  
 
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
 Initialize the given clock output (clkout).
@@ -75,7 +75,7 @@ the library needs to know if the output has been setup for quadrature mode.
 **invert** Whether the output should be inverted.  
 **quadrature** Whether to enable quadrature output for this output.  
 **integer\_mode** Whether to enable integer mode (MS or PLL) for this output.  
-**drive\_strength** The drive strength in current to use for the output.  Must use a predefined library constant for this current value.  
+**drive\_strength** The drive strength in current to use for the output.  Must use one of the predefined library constant for this current value.  
 
 <code>SI5351\_I2C.<b>setup\_pll</b>(self, pll, mult, num=0, denom=1)</code>  
 Set the frequency for the given PLL.
@@ -94,7 +94,7 @@ Must call init\_clock() and setup\_pll() before calling this method.
 <code>SI5351\_I2C.<b>disabled\_states</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
 Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the OEB pin going active.
 The possible disabled states for an output are low, high, high impedance, and never disabled.  
-**s0..s7** The disabled state to set for the appropriate clock output.  Must use the predefined library constants for the state values.  
+**s0..s7** The disabled state to set for the appropriate clock output.  Must use one of the predefined library constants for the state values.  
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
 Disable the output enable pin (OEB) for the given clock outputs (clkout).  

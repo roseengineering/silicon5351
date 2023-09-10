@@ -1,19 +1,19 @@
 
 SI5351_I2C_ADDRESS_DEFAULT    = 0x60
 
-SI5351_CRYSTAL_LOAD_6PF       = (1<<6)
-SI5351_CRYSTAL_LOAD_8PF       = (2<<6)
-SI5351_CRYSTAL_LOAD_10PF      = (3<<6)
+SI5351_CRYSTAL_LOAD_6PF           = 1
+SI5351_CRYSTAL_LOAD_8PF           = 2
+SI5351_CRYSTAL_LOAD_10PF          = 3
 
-SI5351_CLK_DRIVE_STRENGTH_2MA = (0<<0)
-SI5351_CLK_DRIVE_STRENGTH_4MA = (1<<0)
-SI5351_CLK_DRIVE_STRENGTH_6MA = (2<<0)
-SI5351_CLK_DRIVE_STRENGTH_8MA = (3<<0)
+SI5351_CLK_DRIVE_STRENGTH_2MA     = 0
+SI5351_CLK_DRIVE_STRENGTH_4MA     = 1
+SI5351_CLK_DRIVE_STRENGTH_6MA     = 2
+SI5351_CLK_DRIVE_STRENGTH_8MA     = 3
 
-SI5351_DIS_STATE_LOW              = (0<<0)
-SI5351_DIS_STATE_HIGH             = (1<<0)
-SI5351_DIS_STATE_HIGH_IMPEDANCE   = (2<<0)
-SI5351_DIS_STATE_NEVER_DISABLED   = (3<<0)
+SI5351_DIS_STATE_LOW              = 0
+SI5351_DIS_STATE_HIGH             = 1
+SI5351_DIS_STATE_HIGH_IMPEDANCE   = 2
+SI5351_DIS_STATE_NEVER_DISABLED   = 3
 
 
 class SI5351_I2C:
@@ -67,11 +67,13 @@ class SI5351_I2C:
             (P2 & 0x0FF00) >> 8,
             (P2 & 0x000FF) ])
 
-    def __init__(self, i2c, crystal, load, address=SI5351_I2C_ADDRESS_DEFAULT):
-        """Instantiate the SI5353_I2C class.
+    def __init__(self, i2c, crystal, 
+                 load=SI5351_CRYSTAL_LOAD_10PF,
+                 address=SI5351_I2C_ADDRESS_DEFAULT):
+        """Instantiate the SI5353_I2C class.  All clock outputs will be shutdown and disabled.
         :param i2c The micropython I2C object.
         :param crystal The crystal frequency in Hz.
-        :param load The load capacitance of crystal.  Must use a predefined library constant for this capacitance value.
+        :param load The load capacitance of crystal.  Must use one of the predefined library constant for this capacitance value.
         :param address The I2C address of the si5351 chip. 
         """
         self.i2c = i2c
@@ -81,20 +83,22 @@ class SI5351_I2C:
         self.pll = {}
         self.div = {}
         self.quadrature = {}
-        self.write(self.SI5351_REGISTER_CRYSTAL_LOAD, load)
+        self.write(self.SI5351_REGISTER_CRYSTAL_LOAD, load << 6)
         # disable outputs and power down all 8 output drivers
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, 0xFF)
         values = [ self.SI5351_CLK_POWERDOWN ] * 8
         self.write_bulk(self.SI5351_REGISTER_CLK0_CONTROL, values)
 
     def enable_outputs(self, mask):
-        """Enable the given clock outputs (clkout).
-        :param mask A bit mask of the clock outputs to enable.  The non-enabled outputs are disabled.
+        """Enable the given clock outputs (clkout).  The unenabled clock outputs will be disabled.
+        :param mask A bit mask of the clock outputs to enable.
         """
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)
 
     def init_clock(self, output, pll, 
-                   quadrature=False, invert=False, integer_mode=False,
+                   quadrature=False, 
+                   invert=False, 
+                   integer_mode=False,
                    drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
         """Initialize the given clock output (clkout).
         This method must be called before using set_freq() on the output since 
@@ -104,7 +108,7 @@ class SI5351_I2C:
         :param invert Whether the output should be inverted.
         :param quadrature Whether to enable quadrature output for this output.
         :param integer_mode Whether to enable integer mode (MS or PLL) for this output.
-        :param drive_strength The drive strength in current to use for the output.  Must use a predefined library constant for this current value.
+        :param drive_strength The drive strength in current to use for the output.  Must use one of the predefined library constant for this current value.
         """
         value = drive_strength 
         value |= self.SI5351_CLK_INPUT_MULTISYNTH_N
@@ -156,7 +160,7 @@ class SI5351_I2C:
     def disabled_states(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
         """Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the OEB pin going active.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param s0..s7 The disabled state to set for the appropriate clock output.  Must use the predefined library constants for the state values.
+        :param s0..s7 The disabled state to set for the appropriate clock output.  Must use one of the predefined library constants for the state values.
         """
         self.write(self.SI5351_REGISTER_DIS_STATE_1, s3 << 6 | s2 << 4 | s1 << 2 | s0)
         self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
