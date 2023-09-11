@@ -59,7 +59,7 @@ print(f"""\
 
 # silicon5351
 
-A micropython library for controlling the si5351 chip.
+A Micropython library for controlling the SI5351 chip.
 The library also supports generating quadrature output
 using the phase offset feature of the chip.
 
