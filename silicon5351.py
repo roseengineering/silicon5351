@@ -125,6 +125,7 @@ class SI5351_I2C:
         self.set_phase(output, 0)
         self.quadrature[output] = quadrature
         self.pll[output] = pll
+        self.div[output] = 0
 
     def setup_pll(self, pll, mult, num=0, denom=1):
         """Set the frequency for the given PLL.
