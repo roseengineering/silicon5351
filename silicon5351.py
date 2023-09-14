@@ -128,7 +128,7 @@ class SI5351_I2C:
 
     def setup_pll(self, pll, mult, num=0, denom=1):
         """Set the frequency for the given PLL.
-        The PLL frequency is set to the frequency given by (whole + num / denom) times the crystal frequency.
+        The PLL frequency is set to the frequency given by (mult + num / denom) times the crystal frequency.
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
         :param mult The whole number to multiply the crystal frequency by.  This value must be in the range [15-90].
         :param num The numerator to multiply the crystal frequency by. This value must be in the range [0-1048575).

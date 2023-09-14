@@ -95,7 +95,7 @@ the library needs to know if the output has been setup for quadrature mode.
 
 <code>SI5351\_I2C.<b>setup\_pll</b>(self, pll, mult, num=0, denom=1)</code>  
 Set the frequency for the given PLL.
-The PLL frequency is set to the frequency given by (whole + num / denom) times the crystal frequency.  
+The PLL frequency is set to the frequency given by (mult + num / denom) times the crystal frequency.  
 **pll** The number of the PLL to select. (0=PLLA, 1=PLLB)  
 **mult** The whole number to multiply the crystal frequency by.  This value must be in the range [15-90].  
 **num** The numerator to multiply the crystal frequency by. This value must be in the range [0-1048575).  
