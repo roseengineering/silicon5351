@@ -66,7 +66,7 @@ using the phase offset feature of the chip.
 # Introduction
 
 The library file silicon5351.py provides the class SI5351\_I2C
-which you can use to control the Silicon Labs SI5351x range of chips.
+you can use to control the Silicon Labs SI5351x range of chips.
 
 This class also supports quadrature output.  However
 this support is limited by the chip hardware to the 
