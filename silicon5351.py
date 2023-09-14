@@ -1,5 +1,7 @@
 
-SI5351_I2C_ADDRESS_DEFAULT    = 0x60
+import sys
+
+SI5351_I2C_ADDRESS_DEFAULT        = 0x60
 
 SI5351_CRYSTAL_LOAD_6PF           = 1
 SI5351_CRYSTAL_LOAD_8PF           = 2
@@ -51,7 +53,10 @@ class SI5351_I2C:
         self.write_bulk(register, [value])
 
     def write_bulk(self, register, values):
-        self.i2c.writeto_mem(self.address, register, bytes(values))
+        if sys.implementation.name == 'circuitpython':
+            self.i2c.writeto(self.address, bytes([register] + values))
+        else:
+            self.i2c.writeto_mem(self.address, register, bytes(values))
 
     def write_config(self, reg, whole, num, denom, rdiv=0):
         P1 = int(128 * whole + int(128.0 * num / denom) - 512)
@@ -204,12 +209,17 @@ class SI5351_I2C:
 
 
 if __name__ == '__main__':
-    import machine
-
-    # i2c
-    sda = machine.Pin(6)
-    scl = machine.Pin(7)
-    i2c = machine.I2C(1, sda=sda, scl=scl)
+    # XIAO RP2040
+    if sys.implementation.name == 'circuitpython':
+        import board, busio
+        i2c = busio.I2C(board.SCL, board.SDA)
+        while not i2c.try_lock():
+            pass
+    else:
+        import machine
+        sda = machine.Pin(6)
+        scl = machine.Pin(7)
+        i2c = machine.I2C(1, sda=sda, scl=scl)
 
     crystal = 25e6     # crystal frequency
     mult = 32          # 32 * 25e6 = 800 MHz PLL frequency
@@ -221,8 +231,7 @@ if __name__ == '__main__':
     freq = 6.30e6   # divisor = 126.9
 
     # si5351
-    load = SI5351_CRYSTAL_LOAD_10PF
-    si = SI5351_I2C(i2c, crystal=crystal, load=load)
+    si = SI5351_I2C(i2c, crystal=crystal)
 
     si.init_clock(output=0, pll=0)
     si.init_clock(output=1, pll=0, quadrature=quadrature)
@@ -231,10 +240,6 @@ if __name__ == '__main__':
     si.set_freq(output=0, freq=freq) 
     si.set_freq(output=1, freq=freq) 
     si.enable_outputs(0x3)
-
-    # led
-    led_blue = machine.Pin(25, machine.Pin.OUT)
-    led_blue.value(0)    
-
+    print('done')
 
 
