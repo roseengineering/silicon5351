@@ -2,6 +2,7 @@ from silicon5351 import SI5351_I2C
 
 def main():
     # XIAO RP2040
+    import sys
     if sys.implementation.name == 'circuitpython':
         import board, busio
         i2c = busio.I2C(board.SCL, board.SDA)
