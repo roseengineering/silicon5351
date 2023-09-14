@@ -17,7 +17,7 @@ lower limit frequency of the clock's PLL frequency / 128.
 ## Example
 
 ```python
-from silicon5351 import SI5351_CRYSTAL_LOAD_10PF, SI5351_I2C
+from silicon5351 import SI5351_I2C
 
 def main():
     # XIAO RP2040
