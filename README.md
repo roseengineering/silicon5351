@@ -38,11 +38,6 @@ def main():
     freq = 6.30e6      # frequency to output
     quadrature = True  # frequency limited to 800MHz/128
 
-    freq = 6.251e6  # divisor = 127.9
-    freq = 6.2987e6 # divisor = 127.01
-    freq = 6.30e6   # divisor = 126.9
-
-    # si5351
     si = SI5351_I2C(i2c, crystal=crystal)
     si.init_clock(output=0, pll=0)
     si.init_clock(output=1, pll=0, quadrature=quadrature)
