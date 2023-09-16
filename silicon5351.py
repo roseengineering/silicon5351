@@ -76,9 +76,9 @@ class SI5351_I2C:
                  load=SI5351_CRYSTAL_LOAD_10PF,
                  address=SI5351_I2C_ADDRESS_DEFAULT):
         """Instantiate the SI5353_I2C class.  All clock outputs will be shutdown and disabled.
-        :param i2c The micropython I2C object.
+        :param i2c The MicroPython or CircuitPython I2C object.
         :param crystal The crystal frequency in Hz.
-        :param load The load capacitance of crystal.  Must use one of the predefined library constant for this capacitance value.
+        :param load The load capacitance of crystal.  Must use one of the global constants defined in the library for this value.
         :param address The I2C address of the si5351 chip. 
         """
         self.i2c = i2c
@@ -113,7 +113,7 @@ class SI5351_I2C:
         :param invert Whether the output should be inverted.
         :param quadrature Whether to enable quadrature output for this output.
         :param integer_mode Whether to enable integer mode (MS or PLL) for this output.
-        :param drive_strength The drive strength in current to use for the output.  Must use one of the predefined library constant for this current value.
+        :param drive_strength The drive strength in current to use for the output.  Must use one of the global constants defined in the library for this value.
         """
         value = drive_strength 
         value |= self.SI5351_CLK_INPUT_MULTISYNTH_N
@@ -165,7 +165,7 @@ class SI5351_I2C:
     def disabled_states(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
         """Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the OEB pin going active.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param s0..s7 The disabled state to set for the appropriate clock output.  Must use one of the predefined library constants for the state values.
+        :param s0..s7 The disabled state to set for the appropriate clock output.  Must use one of the global constants defined in the library for this value.
         """
         self.write(self.SI5351_REGISTER_DIS_STATE_1, s3 << 6 | s2 << 4 | s1 << 2 | s0)
         self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
