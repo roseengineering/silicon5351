@@ -186,7 +186,7 @@ class SI5351_I2C:
 
     def approximate_fraction(self, n, d, max_denom):
         # cf. https://github.com/python/cpython/blob/master/Lib/fractions.py#L227
-        denom = d;
+        denom = d
         if denom > max_denom:
             num = n
             p0 = 0; q0 = 1; p1 = 1; q1 = 0
