@@ -19,7 +19,7 @@ SI5351_DIS_STATE_NEVER_DISABLED   = 3
 
 
 class SI5351_I2C:
-    SI5351_MULTISYNTH_DIV_MAX      = 2048
+    SI5351_MULTISYNTH_DIV_MAX      = 2048    # 128 for quadrature
     SI5351_MULTISYNTH_C_MAX        = 1048575
 
     # SI5351_REGISTER_PLL_RESET
@@ -59,9 +59,9 @@ class SI5351_I2C:
             self.i2c.writeto_mem(self.address, register, bytes(values))
 
     def write_config(self, reg, whole, num, denom, rdiv=0):
-        P1 = int(128 * whole + int(128.0 * num / denom) - 512)
-        P2 = int(128 * num - denom * int(128.0 * num / denom))
-        P3 = int(denom)
+        P1 = 128 * whole + int(128.0 * num / denom) - 512
+        P2 = 128 * num - denom * int(128.0 * num / denom)
+        P3 = denom
         self.write_bulk(reg, [ 
             (P3 & 0x0FF00) >> 8,
             (P3 & 0x000FF),
@@ -152,9 +152,10 @@ class SI5351_I2C:
         for rdiv in range(8): 
             if freq > vco / self.SI5351_MULTISYNTH_DIV_MAX: break
             freq *= 2
-        div = vco // freq
-        max_denom = self.SI5351_MULTISYNTH_C_MAX # for quadrature, max_denom = 128
-        num, denom = self.approximate_fraction(vco % freq, freq, max_denom)
+        div = int(vco // freq)
+        num = int(vco % freq * 100)
+        denom = int(freq * 100)
+        num, denom = self.approximate_fraction(num, denom, self.SI5351_MULTISYNTH_C_MAX)
         self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv)
         if self.div.get(output) != div:
             if self.quadrature[output]:
