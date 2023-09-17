@@ -153,8 +153,8 @@ class SI5351_I2C:
             if freq > vco / self.SI5351_MULTISYNTH_DIV_MAX: break
             freq *= 2
         div = int(vco // freq)
-        num = int(vco % freq * 100)
         denom = int(freq * 100)
+        num = int(vco * 100) % denom
         num, denom = self.approximate_fraction(num, denom, self.SI5351_MULTISYNTH_C_MAX)
         self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv)
         if self.div.get(output) != div:
