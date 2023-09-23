@@ -87,9 +87,10 @@ class SI5351_I2C:
     def not_ready(self):
         return self.read(self.SI5351_REGISTER_DEVICE_STATUS) & 0x80
 
-    def __init__(self, i2c, crystal, 
-                 load=SI5351_CRYSTAL_LOAD_10PF,
-                 address=SI5351_I2C_ADDRESS_DEFAULT):
+    def __init__(
+            self, i2c, crystal, 
+            load=SI5351_CRYSTAL_LOAD_10PF,
+            address=SI5351_I2C_ADDRESS_DEFAULT):
         """Instantiate the SI5353_I2C class.  All clock outputs will be shutdown and disabled.
         :param i2c The MicroPython or CircuitPython I2C object.
         :param crystal The crystal frequency in Hz.
@@ -117,11 +118,12 @@ class SI5351_I2C:
         """
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)
 
-    def init_clock(self, output, pll, 
-                   quadrature=False, 
-                   invert=False, 
-                   integer_mode=False,
-                   drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
+    def init_clock(
+            self, output, pll, 
+            quadrature=False, 
+            invert=False, 
+            integer_mode=False,
+            drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
         """Initialize the given clock output (clkout).
         This method must be called before using set_freq() on the output since 
         the library needs to know if the output has been setup for quadrature mode.
@@ -175,8 +177,7 @@ class SI5351_I2C:
         num, denom = self.approximate_fraction(num, denom, self.SI5351_MULTISYNTH_C_MAX)
         self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv)
         if self.div.get(output) != div:
-            if self.quadrature[output]:
-                self.set_phase(output, div)
+            self.set_phase(output, div if self.quadrature[output] else 0)
             self.reset_pll(pll) # do after MS set, syncs all clocks derived from this pll 
             self.div[output] = div
 
