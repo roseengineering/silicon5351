@@ -104,8 +104,10 @@ class SI5351_I2C:
         self.pll = {}
         self.div = {}
         self.quadrature = {}
+        # wait until chip initializes before writing registers
         while self.not_ready():
             pass
+        # set the crystal load value
         self.write(self.SI5351_REGISTER_CRYSTAL_LOAD, load << 6)
         # disable outputs and power down all 8 output drivers
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, 0xFF)
@@ -141,10 +143,9 @@ class SI5351_I2C:
         if pll == 0: value |= self.SI5351_CLK_PLL_SELECT_A
         if pll == 1: value |= self.SI5351_CLK_PLL_SELECT_B
         self.write(self.SI5351_REGISTER_CLK0_CONTROL + output, value)
-        self.set_phase(output, 0)
         self.quadrature[output] = quadrature
         self.pll[output] = pll
-        self.div[output] = 0
+        self.div[output] = None
 
     def setup_pll(self, pll, mult, num=0, denom=1):
         """Set the frequency for the given PLL.
