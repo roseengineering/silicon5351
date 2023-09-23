@@ -35,6 +35,7 @@ class SI5351_I2C:
     SI5351_CLK_INVERT              = (1<<4)
 
     # registers
+    SI5351_REGISTER_DEVICE_STATUS = 0
     SI5351_REGISTER_OUTPUT_ENABLE_CONTROL = 3
     SI5351_REGISTER_OEB_ENABLE_CONTROL = 9
     SI5351_REGISTER_CLK0_CONTROL = 16
@@ -48,6 +49,18 @@ class SI5351_I2C:
     SI5351_REGISTER_CLK0_PHOFF = 165
     SI5351_REGISTER_PLL_RESET = 177
     SI5351_REGISTER_CRYSTAL_LOAD = 183
+
+    def read(self, register):
+        return self.read_bulk(register, 1)[0]
+
+    def read_bulk(self, register, nbytes):
+        buf = bytearray(nbytes)
+        if sys.implementation.name == 'circuitpython':
+            self.i2c.writeto_then_readfrom(
+                self.address, bytes([register]), buf)
+        else:
+            self.i2c.readfrom_mem_into(self.address, register, buf)
+        return buf
 
     def write(self, register, value):
         self.write_bulk(register, [value])
@@ -72,6 +85,9 @@ class SI5351_I2C:
             (P2 & 0x0FF00) >> 8,
             (P2 & 0x000FF) ])
 
+    def not_ready(self):
+        return self.read(self.SI5351_REGISTER_DEVICE_STATUS) & 0x80
+
     def __init__(self, i2c, crystal, 
                  load=SI5351_CRYSTAL_LOAD_10PF,
                  address=SI5351_I2C_ADDRESS_DEFAULT):
@@ -88,6 +104,8 @@ class SI5351_I2C:
         self.pll = {}
         self.div = {}
         self.quadrature = {}
+        while self.not_ready():
+            pass
         self.write(self.SI5351_REGISTER_CRYSTAL_LOAD, load << 6)
         # disable outputs and power down all 8 output drivers
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, 0xFF)
@@ -186,7 +204,7 @@ class SI5351_I2C:
         self.write(self.SI5351_REGISTER_PLL_RESET, value)
 
     def approximate_fraction(self, n, d, max_denom):
-        # cf. https://github.com/python/cpython/blob/master/Lib/fractions.py#L227
+        # https://github.com/python/cpython/blob/master/Lib/fractions.py
         denom = d
         if denom > max_denom:
             num = n
