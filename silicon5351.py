@@ -50,26 +50,25 @@ class SI5351_I2C:
     SI5351_REGISTER_PLL_RESET = 177
     SI5351_REGISTER_CRYSTAL_LOAD = 183
 
-    def read(self, register):
-        return self.read_bulk(register, 1)[0]
-
     def read_bulk(self, register, nbytes):
         buf = bytearray(nbytes)
         if sys.implementation.name == 'circuitpython':
-            self.i2c.writeto_then_readfrom(
-                self.address, bytes([register]), buf)
+            self.i2c.writeto_then_readfrom(self.address, bytes([register]), buf)
         else:
             self.i2c.readfrom_mem_into(self.address, register, buf)
         return buf
-
-    def write(self, register, value):
-        self.write_bulk(register, [value])
 
     def write_bulk(self, register, values):
         if sys.implementation.name == 'circuitpython':
             self.i2c.writeto(self.address, bytes([register] + values))
         else:
             self.i2c.writeto_mem(self.address, register, bytes(values))
+
+    def read(self, register):
+        return self.read_bulk(register, 1)[0]
+
+    def write(self, register, value):
+        self.write_bulk(register, [value])
 
     def write_config(self, reg, whole, num, denom, rdiv=0):
         P1 = 128 * whole + int(128.0 * num / denom) - 512
