@@ -14,9 +14,9 @@ else:
     i2c = machine.I2C(1, sda=sda, scl=scl)
 
 crystal = 25e6     # crystal frequency
-mult = 32          # 32 * 25e6 = 800 MHz PLL frequency
-freq = 6.30e6      # frequency to output
-quadrature = True  # frequency limited to 800MHz/128
+mult = 15          # 15 * 25e6 = 375 MHz PLL frequency
+freq = 3.0e6       # frequency to output
+quadrature = True  # frequency limited to 375MHz/128
 
 si = SI5351_I2C(i2c, crystal=crystal)
 si.init_clock(output=0, pll=0)
