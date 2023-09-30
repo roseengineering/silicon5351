@@ -34,18 +34,19 @@ else:
 
 crystal = 25e6     # crystal frequency
 mult = 15          # 15 * 25e6 = 375 MHz PLL frequency
-freq = 3.0e6       # frequency to output
-quadrature = True  # frequency limited to 375MHz/128
+freq = 3.0e6       # output frequency, upper limit 200MHz
+quadrature = True  # lower limit for quadrature is 375MHz / 128
+invert = False
 
 si = SI5351_I2C(i2c, crystal=crystal)
 si.init_clock(output=0, pll=0)
-si.init_clock(output=1, pll=0, quadrature=quadrature)
-# si.init_clock(output=1, pll=0, invert=True)
+si.init_clock(output=1, pll=0, quadrature=quadrature, invert=invert)
 si.setup_pll(pll=0, mult=mult)
 si.set_freq(output=0, freq=freq) 
 si.set_freq(output=1, freq=freq) 
-si.enable_outputs(0x3)
-print('done')
+si.enable_output(0)
+si.enable_output(1)
+print(f'done freq={freq} mult={mult} quadrature={quadrature} invert={invert}')
 ```
 
 The library calls the PLL soft reset function 
@@ -69,9 +70,13 @@ Instantiate the SI5353\_I2C class.  All clock outputs will be shutdown and disab
 
 Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following public properties and methods:   
 
-<code>SI5351\_I2C.<b>enable\_outputs</b>(self, mask)</code>  
-Enable the given clock outputs (clkout).  The unenabled clock outputs will be disabled.  
-**mask** A bit mask of the clock outputs to enable.  
+<code>SI5351\_I2C.<b>enable\_output</b>(self, output)</code>  
+Enable the given clock output (clkout).  
+**output** The clock output to enable.  
+
+<code>SI5351\_I2C.<b>disable\_output</b>(self, output)</code>  
+Disable the given clock output (clkout).  
+**output** The clock output to disable.  
 
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
 Initialize the given clock output (clkout).

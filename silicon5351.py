@@ -84,9 +84,6 @@ class SI5351_I2C:
             (P2 & 0x0FF00) >> 8,
             (P2 & 0x000FF) ])
 
-    def not_ready(self):
-        return self.read(self.SI5351_REGISTER_DEVICE_STATUS) & 0x80
-
     def __init__(
             self, i2c, crystal, 
             load=SI5351_CRYSTAL_LOAD_10PF,
@@ -105,7 +102,7 @@ class SI5351_I2C:
         self.div = {}
         self.quadrature = {}
         # wait until chip initializes before writing registers
-        while self.not_ready():
+        while self.read(self.SI5351_REGISTER_DEVICE_STATUS) & 0x80:
             pass
         # set the crystal load value
         self.write(self.SI5351_REGISTER_CRYSTAL_LOAD, load << 6)
@@ -114,11 +111,21 @@ class SI5351_I2C:
         values = [ self.SI5351_CLK_POWERDOWN ] * 8
         self.write_bulk(self.SI5351_REGISTER_CLK0_CONTROL, values)
 
-    def enable_outputs(self, mask):
-        """Enable the given clock outputs (clkout).  The unenabled clock outputs will be disabled.
-        :param mask A bit mask of the clock outputs to enable.
+    def enable_output(self, output):
+        """Enable the given clock output (clkout).
+        :param output The clock output to enable.
         """
-        self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, ~mask & 0xFF)
+        mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
+        self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, mask & ~(1 << output))
+        pll = self.pll[output]
+        self.reset_pll(pll)
+
+    def disable_output(self, output):
+        """Disable the given clock output (clkout).
+        :param output The clock output to disable.
+        """
+        mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
+        self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, mask | (1 << output))
 
     def init_clock(
             self, output, pll, 
@@ -145,7 +152,7 @@ class SI5351_I2C:
         self.write(self.SI5351_REGISTER_CLK0_CONTROL + output, value)
         self.quadrature[output] = quadrature
         self.pll[output] = pll
-        self.div[output] = None
+        self.reset_pll(pll)
 
     def setup_pll(self, pll, mult, num=0, denom=1):
         """Set the frequency for the given PLL.
@@ -179,7 +186,7 @@ class SI5351_I2C:
         self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv)
         if self.div.get(output) != div:
             self.set_phase(output, div if self.quadrature[output] else 0)
-            self.reset_pll(pll) # do after MS set, syncs all clocks derived from this pll 
+            self.reset_pll(pll) # do only after MS set, syncs all clocks derived from the pll 
             self.div[output] = div
 
     def disabled_states(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):

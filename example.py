@@ -15,17 +15,18 @@ else:
 
 crystal = 25e6     # crystal frequency
 mult = 15          # 15 * 25e6 = 375 MHz PLL frequency
-freq = 3.0e6       # frequency to output
-quadrature = True  # frequency limited to 375MHz/128
+freq = 3.0e6       # output frequency, upper limit 200MHz
+quadrature = True  # lower limit for quadrature is 375MHz / 128
+invert = False
 
 si = SI5351_I2C(i2c, crystal=crystal)
 si.init_clock(output=0, pll=0)
-si.init_clock(output=1, pll=0, quadrature=quadrature)
-# si.init_clock(output=1, pll=0, invert=True)
+si.init_clock(output=1, pll=0, quadrature=quadrature, invert=invert)
 si.setup_pll(pll=0, mult=mult)
 si.set_freq(output=0, freq=freq) 
 si.set_freq(output=1, freq=freq) 
-si.enable_outputs(0x3)
-print('done')
+si.enable_output(0)
+si.enable_output(1)
+print(f'done freq={freq} mult={mult} quadrature={quadrature} invert={invert}')
 
 
