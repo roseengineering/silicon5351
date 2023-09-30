@@ -117,8 +117,7 @@ class SI5351_I2C:
         """
         mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, mask & ~(1 << output))
-        pll = self.pll[output]
-        self.reset_pll(pll)
+        self.reset_pll(self.pll[output])
 
     def disable_output(self, output):
         """Disable the given clock output (clkout).
