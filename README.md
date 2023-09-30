@@ -104,12 +104,12 @@ Must call init\_clock() and setup\_pll() before calling this method.
 **freq** The frequency in Hz to set the clock output (clkout) to.  
 
 <code>SI5351\_I2C.<b>disabled\_states</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
-Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the output enable pin (OEB) going active.
+Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the output enable (OEB) pin going active.
 The possible disabled states for an output are low, high, high impedance, and never disabled.  
 **s0..s7** The disabled state to set for the appropriate clock output (clkout).  Must use one of the global constants defined in the library for this value.  
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
-Disable the output enable pin (OEB) for the given clock outputs (clkouts).  
-**mask** A bit mask of the clock outputs (clkouts) to disable OEB pin support for.  
+Disable the output enable (OEB) pin for the given clock outputs (clkouts).  
+**mask** A bit mask of the clock outputs (clkouts) to disable output enable (OEB) pin support for.  
 
 

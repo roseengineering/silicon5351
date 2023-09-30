@@ -190,7 +190,7 @@ class SI5351_I2C:
             self.div[output] = div
 
     def disabled_states(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
-        """Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the output enable pin (OEB) going active.
+        """Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the output enable (OEB) pin going active.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
         :param s0..s7 The disabled state to set for the appropriate clock output (clkout).  Must use one of the global constants defined in the library for this value.
         """
@@ -198,8 +198,8 @@ class SI5351_I2C:
         self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
 
     def disable_oeb(self, mask):
-        """Disable the output enable pin (OEB) for the given clock outputs (clkouts).
-        :param mask A bit mask of the clock outputs (clkouts) to disable OEB pin support for.
+        """Disable the output enable (OEB) pin for the given clock outputs (clkouts).
+        :param mask A bit mask of the clock outputs (clkouts) to disable output enable (OEB) pin support for.
         """
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
