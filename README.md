@@ -62,7 +62,7 @@ the statement with quadrature=quadrature.
 ## API
 
 <code>class silicon5351.<b>SI5351\_I2C</b>(self, i2c, crystal, load=3, address=96)</code>  
-Instantiate the SI5353\_I2C class.  All clock outputs will be shutdown and disabled.  
+Instantiate the SI5353\_I2C class.  All clock outputs (clkouts) will be shutdown and disabled.  
 **i2c** The MicroPython or CircuitPython I2C object.  
 **crystal** The crystal frequency in Hz.  
 **load** The load capacitance of crystal.  Must use one of the global constants defined in the library for this value.  
@@ -72,17 +72,17 @@ Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the foll
 
 <code>SI5351\_I2C.<b>enable\_output</b>(self, output)</code>  
 Enable the given clock output (clkout).  
-**output** The clock output to enable.  
+**output** The clock output (clkout) to enable.  
 
 <code>SI5351\_I2C.<b>disable\_output</b>(self, output)</code>  
 Disable the given clock output (clkout).  
-**output** The clock output to disable.  
+**output** The clock output (clkout) to disable.  
 
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
 Initialize the given clock output (clkout).
 This method must be called before using set\_freq() on the output since
 the library needs to know if the output has been setup for quadrature mode.  
-**output** The number of the clock output to initialize   
+**output** The number of the clock output (clkout) to initialize   
 **pll** The number of the PLL to select. (0=PLLA, 1=PLLB)  
 **invert** Whether the output should be inverted.  
 **quadrature** Whether to enable quadrature output for this output.  
@@ -100,16 +100,16 @@ The PLL frequency is set to the frequency given by (mult + num / denom) times th
 <code>SI5351\_I2C.<b>set\_freq</b>(self, output, freq)</code>  
 Set the frequency for the clock output (clkout).
 Must call init\_clock() and setup\_pll() before calling this method.  
-**output** The number of the clock output to set the frequency for.  
-**freq** The frequency in Hz to set the clock output to.  
+**output** The number of the clock output (clkout) to set the frequency for.  
+**freq** The frequency in Hz to set the clock output (clkout) to.  
 
 <code>SI5351\_I2C.<b>disabled\_states</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
-Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the OEB pin going active.
+Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the output enable pin (OEB) going active.
 The possible disabled states for an output are low, high, high impedance, and never disabled.  
-**s0..s7** The disabled state to set for the appropriate clock output.  Must use one of the global constants defined in the library for this value.  
+**s0..s7** The disabled state to set for the appropriate clock output (clkout).  Must use one of the global constants defined in the library for this value.  
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
-Disable the output enable pin (OEB) for the given clock outputs (clkout).  
-**mask** A bit mask of the clock outputs to disable OEB pin support for.  
+Disable the output enable pin (OEB) for the given clock outputs (clkouts).  
+**mask** A bit mask of the clock outputs (clkouts) to disable OEB pin support for.  
 
 

@@ -88,7 +88,7 @@ class SI5351_I2C:
             self, i2c, crystal, 
             load=SI5351_CRYSTAL_LOAD_10PF,
             address=SI5351_I2C_ADDRESS_DEFAULT):
-        """Instantiate the SI5353_I2C class.  All clock outputs will be shutdown and disabled.
+        """Instantiate the SI5353_I2C class.  All clock outputs (clkouts) will be shutdown and disabled.
         :param i2c The MicroPython or CircuitPython I2C object.
         :param crystal The crystal frequency in Hz.
         :param load The load capacitance of crystal.  Must use one of the global constants defined in the library for this value.
@@ -113,7 +113,7 @@ class SI5351_I2C:
 
     def enable_output(self, output):
         """Enable the given clock output (clkout).
-        :param output The clock output to enable.
+        :param output The clock output (clkout) to enable.
         """
         mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, mask & ~(1 << output))
@@ -122,7 +122,7 @@ class SI5351_I2C:
 
     def disable_output(self, output):
         """Disable the given clock output (clkout).
-        :param output The clock output to disable.
+        :param output The clock output (clkout) to disable.
         """
         mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, mask | (1 << output))
@@ -136,7 +136,7 @@ class SI5351_I2C:
         """Initialize the given clock output (clkout).
         This method must be called before using set_freq() on the output since 
         the library needs to know if the output has been setup for quadrature mode.
-        :param output The number of the clock output to initialize 
+        :param output The number of the clock output (clkout) to initialize 
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
         :param invert Whether the output should be inverted.
         :param quadrature Whether to enable quadrature output for this output.
@@ -171,8 +171,8 @@ class SI5351_I2C:
     def set_freq(self, output, freq):
         """Set the frequency for the clock output (clkout).
         Must call init_clock() and setup_pll() before calling this method.
-        :param output The number of the clock output to set the frequency for.
-        :param freq The frequency in Hz to set the clock output to.
+        :param output The number of the clock output (clkout) to set the frequency for.
+        :param freq The frequency in Hz to set the clock output (clkout) to.
         """
         pll = self.pll[output]
         vco = self.vco[pll]
@@ -190,16 +190,16 @@ class SI5351_I2C:
             self.div[output] = div
 
     def disabled_states(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
-        """Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the OEB pin going active.
+        """Set the state of the clock outputs (clkout) when one or more clocks are disabled either in software or as a result of the output enable pin (OEB) going active.
         The possible disabled states for an output are low, high, high impedance, and never disabled.
-        :param s0..s7 The disabled state to set for the appropriate clock output.  Must use one of the global constants defined in the library for this value.
+        :param s0..s7 The disabled state to set for the appropriate clock output (clkout).  Must use one of the global constants defined in the library for this value.
         """
         self.write(self.SI5351_REGISTER_DIS_STATE_1, s3 << 6 | s2 << 4 | s1 << 2 | s0)
         self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
 
     def disable_oeb(self, mask):
-        """Disable the output enable pin (OEB) for the given clock outputs (clkout).
-        :param mask A bit mask of the clock outputs to disable OEB pin support for.
+        """Disable the output enable pin (OEB) for the given clock outputs (clkouts).
+        :param mask A bit mask of the clock outputs (clkouts) to disable OEB pin support for.
         """
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
