@@ -51,7 +51,9 @@ print(f'done freq={freq} mult={mult} quadrature={quadrature} invert={invert}')
 
 The library calls the PLL soft reset function 
 of the chip whenever the MultiSynth whole number portion
-of the divisor changes.  This is needed to generate quadrature
+of the divisor changes.  It is also called after init_clock()
+and enable_output().
+This is needed to generate quadrature
 output.  It is also synchronizes all the outputs 
 derived from a particular PLL.
 In this way all outputs of a given PLL are forced to be coherrent
@@ -71,7 +73,7 @@ Instantiate the SI5353\_I2C class.  All clock outputs (clkouts) will be shutdown
 Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following public properties and methods:   
 
 <code>SI5351\_I2C.<b>enable\_output</b>(self, output)</code>  
-Enable the given clock output (clkout).  
+Enable the given clock output (clkout).  The clock output must be setup with init\_clock() before calling this function.  
 **output** The clock output (clkout) to enable.  
 
 <code>SI5351\_I2C.<b>disable\_output</b>(self, output)</code>  

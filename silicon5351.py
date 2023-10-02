@@ -112,7 +112,7 @@ class SI5351_I2C:
         self.write_bulk(self.SI5351_REGISTER_CLK0_CONTROL, values)
 
     def enable_output(self, output):
-        """Enable the given clock output (clkout).
+        """Enable the given clock output (clkout).  The clock output must be setup with init_clock() before calling this function.
         :param output The clock output (clkout) to enable.
         """
         mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
