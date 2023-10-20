@@ -9,7 +9,7 @@ if sys.implementation.name == 'circuitpython':
         pass
 else:
     import machine
-    i2c = machine.I2C(1, sda=machine.Pin(6), scl=machine.Pin(7))
+    i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6))
 
 crystal = 25e6     # crystal frequency
 mult = 15          # 15 * 25e6 = 375 MHz PLL frequency
