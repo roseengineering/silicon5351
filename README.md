@@ -19,17 +19,16 @@ to clock's PLL frequency divided by 128.
 ```python
 from silicon5351 import SI5351_I2C
 
-# XIAO RP2040
 import sys
 if sys.implementation.name == 'circuitpython':
     import board, busio
-    i2c = busio.I2C(board.SCL, board.SDA)
+    # i2c = busio.I2C(board.SCL, board.SDA) # XIAO RP2040
+    i2c = busio.I2C(board.GP5, board.GP4)   # PICO
     while not i2c.try_lock():
         pass
 else:
     import machine
-    sda = machine.Pin(6)
-    scl = machine.Pin(7)
+    sda, scl = machine.Pin(6), machine.Pin(7)
     i2c = machine.I2C(1, sda=sda, scl=scl)
 
 crystal = 25e6     # crystal frequency
