@@ -84,8 +84,8 @@ of the divisor changes.  It is also called after init_clock()
 and enable_output().
 This is required in order to generate quadrature
 output.  But it is also required to synchronize all outputs 
-derived from a particular PLL, so all outputs derived off a given PLL 
-are coherrent, even if quadrature mode is not selected.  This can be demonstrated
+derived off a particular PLL, so all such derived outputs
+are coherrent, like inverted outputs.  This can be demonstrated
 by uncommenting the statement above with invert=True and commenting out
 the statement with quadrature=quadrature.
 
