@@ -51,11 +51,10 @@ The library calls the PLL soft reset function
 of the chip whenever the MultiSynth whole number portion
 of the divisor changes.  It is also called after init_clock()
 and enable_output().
-This is needed to generate quadrature
-output.  It is also synchronizes all the outputs 
-derived from a particular PLL.
-In this way all outputs of a given PLL are forced to be coherrent
-even if quadrature mode is not selected.  This can be demonstrated
+This is required in order to generate quadrature
+output.  But it is also required to synchronize all outputs 
+derived from a particular PLL, so all outputs derived off a given PLL 
+are coherrent, even if quadrature mode is not selected.  This can be demonstrated
 by uncommenting the statement above with invert=True and commenting out
 the statement with quadrature=quadrature.
 
