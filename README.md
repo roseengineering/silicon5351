@@ -34,8 +34,8 @@ crystal = 25e6     # crystal frequency
 mult = 15          # 15 * 25e6 = 375 MHz PLL frequency
 freq = 3.0e6       # output frequency, upper limit 200MHz
 quadrature = True  # lower limit for quadrature is 375MHz / 128
-invert = False     # invert has no effect in quadrature mode
-# invert = True
+invert = False     # invert option is ignored in quadrature mode
+# invert, quadrature = True, False
 
 si = SI5351_I2C(i2c, crystal=crystal)
 si.init_clock(output=0, pll=0)
@@ -56,8 +56,7 @@ This is required in order to generate quadrature
 output.  But it is also required to synchronize all outputs 
 derived off a particular PLL, so all such derived outputs
 are coherrent, like inverted outputs.  This can be demonstrated
-by uncommenting the statement above with invert=True and commenting out
-the statement with quadrature=quadrature.
+by uncommenting the statement with "invert, quadrature = True, False".
 
 ## API
 

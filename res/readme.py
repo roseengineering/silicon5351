@@ -86,8 +86,7 @@ This is required in order to generate quadrature
 output.  But it is also required to synchronize all outputs 
 derived off a particular PLL, so all such derived outputs
 are coherrent, like inverted outputs.  This can be demonstrated
-by uncommenting the statement above with invert=True and commenting out
-the statement with quadrature=quadrature.
+by uncommenting the statement with "invert, quadrature = True, False".
 
 ## API
 
