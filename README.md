@@ -35,6 +35,7 @@ mult = 15          # 15 * 25e6 = 375 MHz PLL frequency
 freq = 3.0e6       # output frequency, upper limit 200MHz
 quadrature = True  # lower limit for quadrature is 375MHz / 128
 invert = False     # invert has no effect in quadrature mode
+# invert = True
 
 si = SI5351_I2C(i2c, crystal=crystal)
 si.init_clock(output=0, pll=0)
