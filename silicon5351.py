@@ -261,9 +261,10 @@ class SI5351_I2C:
         num, denom = self.approximate_fraction(num, denom, self.SI5351_MULTISYNTH_C_MAX)
         self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv)
         if self.div.get(output) != div:
-            self.div[output] = div
             self.set_phase(output, div if self.quadrature[output] else 0)
             self.reset_pll(pll) # only after MS setup, syncs all clocks of pll 
-        self.init_multisynth(output)
+            if self.div.get(output) is None:
+                self.init_multisynth(output)
+            self.div[output] = div
 
 
