@@ -132,8 +132,8 @@ class SI5351_I2C:
             value |= self.SI5351_CLK_PLL_SELECT_B
         self.write(self.SI5351_REGISTER_CLK0_CONTROL + output, value)
 
-    def __init__(
-            self, i2c, crystal, 
+    def __init__(self, 
+            i2c, crystal, 
             load=SI5351_CRYSTAL_LOAD_10PF,
             address=SI5351_I2C_ADDRESS_DEFAULT):
         """Instantiate the SI5353_I2C class.  All clock outputs 
@@ -164,8 +164,9 @@ class SI5351_I2C:
         # set crystal load value
         self.write(self.SI5351_REGISTER_CRYSTAL_LOAD, load << 6)
 
-    def init_clock(
-            self, output, pll, 
+    def init_clock(self, 
+            output, 
+            pll, 
             quadrature=False, 
             invert=False, 
             integer_mode=False,
@@ -203,18 +204,21 @@ class SI5351_I2C:
         mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, mask | (1 << output))
 
-    def disabled_states(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0):
+    def disabled_states(self, output, state):
         """Set the state of the clock outputs (clkout) when one 
         or more clocks are disabled either in software or 
         as a result of the output enable (OEB) pin going active.
         The possible disabled states for an output are low voltage, high
         voltage, high impedance, and never disabled.
-        :param s0..s7 The disabled state to set for the appropriate clock \
+        :param output The clock output (clkout) to set the disabled state for.
+        :param state The disabled state to set for the clock \
         output (clkout).  Must use one of the global constants defined in \
         the library for this value.
         """
-        self.write(self.SI5351_REGISTER_DIS_STATE_1, s3 << 6 | s2 << 4 | s1 << 2 | s0)
-        self.write(self.SI5351_REGISTER_DIS_STATE_2, s7 << 6 | s6 << 4 | s5 << 2 | s4)
+        s = [0] * 8
+        s[output] = state
+        self.write(self.SI5351_REGISTER_DIS_STATE_1, s[3] << 6 | s[2] << 4 | s[1] << 2 | s[0])
+        self.write(self.SI5351_REGISTER_DIS_STATE_2, s[7] << 6 | s[6] << 4 | s[5] << 2 | s[4])
 
     def disable_oeb(self, mask):
         """Disable the output enable (OEB) pin for the given 

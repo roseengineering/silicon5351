@@ -7,11 +7,11 @@ using the phase offset feature of the chip.
 
 # Introduction
 
-The file silicon5351.py contains the actual si5351 library. This library 
-provides the SI5351\_I2C class to control the Silicon Labs SI5351x range of chips.
+The file silicon5351.py contains the actual si5351 library. Inside the library
+is the SI5351\_I2C class for controlling the Silicon Labs SI5351x range of chips.
 
-This class also supports quadrature output.  The lowest frequency which 
-can be outputted in quadrature is limited by the chip hardware 
+This class also supports the quadrature ouptut feature of the chip.  The lowest 
+frequency which can be outputted in quadrature is limited by the chip hardware 
 to clock's PLL frequency divided by 128.
 
 ## Example
@@ -52,7 +52,7 @@ of the chip whenever the MultiSynth whole number portion
 of the divisor changes or is intitialized.
 This soft reset is required in order to generate a quadrature
 or an inverted output.  It is also required to synchronize all outputs 
-derived off a particular PLL, in order for them to be coherrent.
+derived off a particular PLL and be coherrent with respect to each other.
 
 ## API
 
@@ -85,13 +85,14 @@ Enable the given clock output (clkout).
 Disable the given clock output (clkout).  
 **output** The clock output (clkout) to disable.  
 
-<code>SI5351\_I2C.<b>disabled\_states</b>(s0=0, s1=0, s2=0, s3=0, s4=0, s5=0, s6=0, s7=0)</code>  
+<code>SI5351\_I2C.<b>disabled\_states</b>(self, output, state)</code>  
 Set the state of the clock outputs (clkout) when one
 or more clocks are disabled either in software or
 as a result of the output enable (OEB) pin going active.
 The possible disabled states for an output are low voltage, high
 voltage, high impedance, and never disabled.  
-**s0..s7** The disabled state to set for the appropriate clock         output (clkout).  Must use one of the global constants defined in         the library for this value.  
+**output** The clock output (clkout) to set the disabled state for.  
+**state** The disabled state to set for the clock         output (clkout).  Must use one of the global constants defined in         the library for this value.  
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
 Disable the output enable (OEB) pin for the given
