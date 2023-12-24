@@ -171,7 +171,8 @@ class SI5351_I2C:
             integer_mode=False,
             drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
         """Initialize the given clock output (clkout).
-        This method must be called before using set_freq() on the output.
+        This method must be called before using set_freq_fixedpll() on 
+        the output.
         :param output The number of the clock output (clkout) to initialize 
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
         :param invert Invert the output.
@@ -260,11 +261,10 @@ class SI5351_I2C:
         num = int(vco * 100) % denom
         num, denom = self.approximate_fraction(num, denom, self.SI5351_MULTISYNTH_C_MAX)
         self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv)
+        if self.div.get(output) is None:
+            self.init_multisynth(output)
         if self.div.get(output) != div:
             self.set_phase(output, div if self.quadrature[output] else 0)
             self.reset_pll(pll) # only after MS setup, syncs all clocks of pll 
-            if self.div.get(output) is None:
-                self.init_multisynth(output)
             self.div[output] = div
-
 

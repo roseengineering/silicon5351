@@ -65,11 +65,11 @@ using the phase offset feature of the chip.
 
 # Introduction
 
-The library file silicon5351.py provides the class SI5351\_I2C
-you can use to control the Silicon Labs SI5351x range of chips.
+The file silicon5351.py contains the actual si5351 library. This library 
+provides the SI5351\_I2C class to control the Silicon Labs SI5351x range of chips.
 
-This class also supports quadrature output.  However
-the lowest frequency which can be outputted is limited by the chip hardware 
+This class also supports quadrature output.  The lowest frequency which 
+can be outputted in quadrature is limited by the chip hardware 
 to clock's PLL frequency divided by 128.
 
 ## Example
@@ -80,13 +80,10 @@ to clock's PLL frequency divided by 128.
 
 The library calls the PLL soft reset function 
 of the chip whenever the MultiSynth whole number portion
-of the divisor changes.  It is also called after init_clock()
-and enable_output().
-This is required in order to generate quadrature
-output.  But it is also required to synchronize all outputs 
-derived off a particular PLL, so all such derived outputs
-are coherrent, like inverted outputs.  This can be demonstrated
-by uncommenting the statement with "invert, quadrature = True, False".
+of the divisor changes or is intitialized.
+This soft reset is required in order to generate a quadrature
+or an inverted output.  It is also required to synchronize all outputs 
+derived off a particular PLL, in order for them to be coherrent.
 
 ## API
 
