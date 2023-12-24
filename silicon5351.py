@@ -215,10 +215,14 @@ class SI5351_I2C:
         output (clkout).  Must use one of the global constants defined in \
         the library for this value.
         """
-        s = [0] * 8
+        reg = self.SI5351_REGISTER_DIS_STATE_1
+        if output > 3:
+            reg = self.SI5351_REGISTER_DIS_STATE_2
+            output -= 4
+        value = self.read(reg)
+        s = [ (value >> (n * 2)) & 0x3 for n in range(4) ]
         s[output] = state
-        self.write(self.SI5351_REGISTER_DIS_STATE_1, s[3] << 6 | s[2] << 4 | s[1] << 2 | s[0])
-        self.write(self.SI5351_REGISTER_DIS_STATE_2, s[7] << 6 | s[6] << 4 | s[5] << 2 | s[4])
+        self.write(reg, s[3] << 6 | s[2] << 4 | s[1] << 2 | s[0])
 
     def disable_oeb(self, mask):
         """Disable the output enable (OEB) pin for the given 
