@@ -215,8 +215,9 @@ class SI5351_I2C:
         output (clkout).  Must use one of the global constants defined in \
         the library for this value.
         """
-        reg = self.SI5351_REGISTER_DIS_STATE_1
-        if output > 3:
+        if output < 4:
+            reg = self.SI5351_REGISTER_DIS_STATE_1
+        else:
             reg = self.SI5351_REGISTER_DIS_STATE_2
             output -= 4
         value = self.read(reg)
