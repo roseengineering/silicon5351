@@ -86,7 +86,7 @@ class SI5351_I2C:
             (P2 & 0x0FF00) >> 8,
             (P2 & 0x000FF) ])
 
-    def setup_multisynth(self, output, pll, div, num, denom, rdiv):
+    def setup_multisynth(self, output, pll, div, num=0, denom=1, rdiv=0):
         if output == 0: reg = self.SI5351_REGISTER_MULTISYNTH0_PARAMETERS_1
         if output == 1: reg = self.SI5351_REGISTER_MULTISYNTH1_PARAMETERS_1
         if output == 2: reg = self.SI5351_REGISTER_MULTISYNTH2_PARAMETERS_1
@@ -264,7 +264,7 @@ class SI5351_I2C:
         for rdiv in range(8): 
             if freq > vco / self.SI5351_MULTISYNTH_DIV_MAX: break
             freq *= 2
-        div = int(vco // freq) # div = 4, 6, [8-2047]
+        div = int(vco // freq) # div = 4, 6, 8+0/1048575 to 2048
         denom = int(freq * 100)
         num = int(vco * 100) % denom
         max_denom = self.SI5351_MULTISYNTH_C_MAX
@@ -279,15 +279,15 @@ class SI5351_I2C:
 
     def set_freq_fixedms(self, output, div, freq):
         pll = self.pll[output]
-        mul = int(freq * div // self.crystal) # mul = [15-90]
+        mul = int(freq * div // self.crystal) # mul = 15+0/1048575 to 90
         denom = int(self.crystal * 100)
         num = int(freq * div * 100) % denom
         max_denom = self.SI5351_MULTISYNTH_C_MAX
         num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
         setup_pll(pll, mul=mul, num=num, denom=denom)
         if self.div[output] != div:
+            self.setup_multisynth(output, pll=pll, div=div)
             self.init_multisynth(output, integer_mode=True)
-            self.setup_multisynth(output, pll=pll, div=div, num=0, denom=1, rdiv=0)
             self.div[output] = div
 
 
