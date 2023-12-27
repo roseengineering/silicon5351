@@ -31,20 +31,20 @@ else:
     i2c = machine.I2C(1, scl=machine.Pin(7), sda=machine.Pin(6))
 
 crystal = 25e6     # crystal frequency
-mult = 15          # 15 * 25e6 = 375 MHz PLL frequency
+mul = 15           # 15 * 25e6 = 375 MHz PLL frequency
 freq = 3.0e6       # output frequency with an upper limit 200MHz
 quadrature = True  # lower limit for quadrature is 375MHz / 128
 invert = False     # invert option ignored when quadrature is true
 
 si = SI5351_I2C(i2c, crystal=crystal)
-si.setup_pll(pll=0, mult=mult)
+si.setup_pll(pll=0, mul=mul)
 si.init_clock(output=0, pll=0)
 si.init_clock(output=1, pll=0, quadrature=quadrature, invert=invert)
 si.set_freq_fixedpll(output=0, freq=freq) 
 si.set_freq_fixedpll(output=1, freq=freq) 
 si.enable_output(output=0)
 si.enable_output(output=1)
-print(f'done freq={freq} mult={mult} quadrature={quadrature} invert={invert}')
+print(f'done freq={freq} mul={mul} quadrature={quadrature} invert={invert}')
 ```
 
 The library calls the PLL soft reset function 
@@ -66,7 +66,7 @@ Instantiate the SI5353\_I2C class.  All clock outputs
 
 Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following public properties and methods:   
 
-<code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, integer\_mode=False, drive\_strength=3)</code>  
+<code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, drive\_strength=3)</code>  
 Initialize the given clock output (clkout).
 This method must be called before using set\_freq\_fixedpll() on
 the output.  
@@ -74,7 +74,6 @@ the output.
 **pll** The number of the PLL to select. (0=PLLA, 1=PLLB)  
 **invert** Invert the output.  
 **quadrature** Invert the output and also enable quadrature         logic in the library.  
-**integer\_mode** Enable enable integer mode for this output.  
 **drive\_strength** The drive strength in current to use         for the output. Must use one of the global constants defined         in the library for this value.  
 
 <code>SI5351\_I2C.<b>enable\_output</b>(self, output)</code>  
@@ -99,14 +98,14 @@ Disable the output enable (OEB) pin for the given
 clock outputs (clkouts).  
 **mask** A bit mask of the clock outputs (clkouts) to disable         output enable (OEB) pin support for.  
 
-<code>SI5351\_I2C.<b>setup\_pll</b>(self, pll, mult, num=0, denom=1)</code>  
+<code>SI5351\_I2C.<b>setup\_pll</b>(self, pll, mul, num=0, denom=1)</code>  
 Set the frequency for the given PLL.
 The PLL frequency is set to the frequency given by
-(mult + num / denom) times the crystal frequency.  
+(mul + num / denom) times the crystal frequency.  
 **pll** The number of the PLL to select. (0=PLLA, 1=PLLB)  
-**mult** The whole number to multiply the crystal frequency         by.  This value must be in the range [15-90].  
+**mul** The whole number to multiply the crystal frequency         by.  This value must be in the range [15-90].  
 **num** The numerator to multiply the crystal frequency         by. This value must be in the range [0-1048575).  
-**denom** The denominator to multiply the crystal         frequency by. This value must be in the range (0-1048575].  
+**denom** The denominator to multiply the crystal         frequency by. This value must be in the range [1-1048575].  
 
 <code>SI5351\_I2C.<b>set\_freq\_fixedpll</b>(self, output, freq)</code>  
 Set the frequency for the clock output (clkout).  Must

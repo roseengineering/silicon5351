@@ -19,7 +19,7 @@ SI5351_DIS_STATE_NEVER_DISABLED   = 3
 
 
 class SI5351_I2C:
-    SI5351_MULTISYNTH_DIV_MAX      = 2048    # 128 for quadrature
+    SI5351_MULTISYNTH_DIV_MAX      = 2048    # DIV_MAX = 128 for quadrature
     SI5351_MULTISYNTH_C_MAX        = 1048575
 
     # SI5351_REGISTER_PLL_RESET
@@ -72,7 +72,7 @@ class SI5351_I2C:
 
     ###
 
-    def write_config(self, reg, whole, num, denom, rdiv=0):
+    def write_config(self, reg, whole, num, denom, rdiv):
         P1 = 128 * whole + int(128.0 * num / denom) - 512
         P2 = 128 * num - denom * int(128.0 * num / denom)
         P3 = denom
@@ -90,7 +90,7 @@ class SI5351_I2C:
         if output == 0: reg = self.SI5351_REGISTER_MULTISYNTH0_PARAMETERS_1
         if output == 1: reg = self.SI5351_REGISTER_MULTISYNTH1_PARAMETERS_1
         if output == 2: reg = self.SI5351_REGISTER_MULTISYNTH2_PARAMETERS_1
-        self.write_config(reg, div, num, denom, rdiv=rdiv)
+        self.write_config(reg, whole=div, num=num, denom=denom, rdiv=rdiv)
 
     def set_phase(self, output, div):
         self.write(self.SI5351_REGISTER_CLK0_PHOFF + output, int(div) & 0xFF)
@@ -133,7 +133,8 @@ class SI5351_I2C:
         self.write(self.SI5351_REGISTER_CLK0_CONTROL + output, value)
 
     def __init__(self, 
-            i2c, crystal, 
+            i2c,
+            crystal, 
             load=SI5351_CRYSTAL_LOAD_10PF,
             address=SI5351_I2C_ADDRESS_DEFAULT):
         """Instantiate the SI5353_I2C class.  All clock outputs 
@@ -149,10 +150,10 @@ class SI5351_I2C:
         self.address = address
         self.vco = {}
         self.pll = {}
-        self.div = {}
         self.quadrature = {}
         self.invert = {}
         self.drive_strength = {}
+        self.div = {}
         # wait until chip initializes before writing registers
         while self.read(self.SI5351_REGISTER_DEVICE_STATUS) & 0x80:
             pass
@@ -169,7 +170,6 @@ class SI5351_I2C:
             pll, 
             quadrature=False, 
             invert=False, 
-            integer_mode=False,
             drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
         """Initialize the given clock output (clkout).
         This method must be called before using set_freq_fixedpll() on 
@@ -179,15 +179,14 @@ class SI5351_I2C:
         :param invert Invert the output.
         :param quadrature Invert the output and also enable quadrature \
         logic in the library.
-        :param integer_mode Enable enable integer mode for this output.
         :param drive_strength The drive strength in current to use \
         for the output. Must use one of the global constants defined \
         in the library for this value.
         """
-        self.drive_strength[output] = drive_strength
-        self.invert[output] = invert
-        self.quadrature[output] = quadrature
         self.pll[output] = pll
+        self.quadrature[output] = quadrature
+        self.invert[output] = invert
+        self.drive_strength[output] = drive_strength
         self.div[output] = None
 
     def enable_output(self, output):
@@ -233,24 +232,24 @@ class SI5351_I2C:
         """
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
-    def setup_pll(self, pll, mult, num=0, denom=1):
+    def setup_pll(self, pll, mul, num=0, denom=1):
         """Set the frequency for the given PLL.
         The PLL frequency is set to the frequency given by 
-        (mult + num / denom) times the crystal frequency.
+        (mul + num / denom) times the crystal frequency.
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
-        :param mult The whole number to multiply the crystal frequency \
+        :param mul The whole number to multiply the crystal frequency \
         by.  This value must be in the range [15-90].
         :param num The numerator to multiply the crystal frequency \
         by. This value must be in the range [0-1048575).
         :param denom The denominator to multiply the crystal \
-        frequency by. This value must be in the range (0-1048575].
+        frequency by. This value must be in the range [1-1048575].
         """
-        vco = self.crystal * (mult + num / denom)
+        vco = self.crystal * (mul + num / denom)
         if pll == 0: 
             reg = self.SI5351_REGISTER_PLL_A
         if pll == 1: 
             reg = self.SI5351_REGISTER_PLL_B
-        self.write_config(reg, mult, num, denom)
+        self.write_config(reg, whole=mul, num=num, denom=denom, rdiv=0)
         self.vco[pll] = vco
 
     def set_freq_fixedpll(self, output, freq):
@@ -265,15 +264,30 @@ class SI5351_I2C:
         for rdiv in range(8): 
             if freq > vco / self.SI5351_MULTISYNTH_DIV_MAX: break
             freq *= 2
-        div = int(vco // freq)
+        div = int(vco // freq) # div = 4, 6, [8-2047]
         denom = int(freq * 100)
         num = int(vco * 100) % denom
-        num, denom = self.approximate_fraction(num, denom, self.SI5351_MULTISYNTH_C_MAX)
-        self.setup_multisynth(output, pll, div, num, denom, rdiv=rdiv)
-        if self.div.get(output) is None:
+        max_denom = self.SI5351_MULTISYNTH_C_MAX
+        num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
+        self.setup_multisynth(output, pll=pll, div=div, num=num, denom=denom, rdiv=rdiv)
+        if self.div[output] is None:
             self.init_multisynth(output)
-        if self.div.get(output) != div:
+        if self.div[output] != div:
             self.set_phase(output, div if self.quadrature[output] else 0)
             self.reset_pll(pll) # only after MS setup, syncs all clocks of pll 
             self.div[output] = div
+
+    def set_freq_fixedms(self, output, div, freq):
+        pll = self.pll[output]
+        mul = int(freq * div // self.crystal) # mul = [15-90]
+        denom = int(self.crystal * 100)
+        num = int(freq * div * 100) % denom
+        max_denom = self.SI5351_MULTISYNTH_C_MAX
+        num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
+        setup_pll(pll, mul=mul, num=num, denom=denom)
+        if self.div[output] != div:
+            self.init_multisynth(output, integer_mode=True)
+            self.setup_multisynth(output, pll=pll, div=div, num=0, denom=1, rdiv=0)
+            self.div[output] = div
+
 
