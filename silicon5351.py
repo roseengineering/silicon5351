@@ -86,7 +86,7 @@ class SI5351_I2C:
             (P2 & 0x0FF00) >> 8,
             (P2 & 0x000FF) ])
 
-    def setup_multisynth(self, output, pll, div, num=0, denom=1, rdiv=0):
+    def setup_multisynth(self, output, pll, div, num, denom, rdiv):
         if output == 0: reg = self.SI5351_REGISTER_MULTISYNTH0_PARAMETERS_1
         if output == 1: reg = self.SI5351_REGISTER_MULTISYNTH1_PARAMETERS_1
         if output == 2: reg = self.SI5351_REGISTER_MULTISYNTH2_PARAMETERS_1
@@ -277,16 +277,18 @@ class SI5351_I2C:
             self.reset_pll(pll) # only after MS setup, syncs all clocks of pll 
             self.div[output] = div
 
-    def set_freq_fixedms(self, output, div, freq):
+    def set_freq_fixedms(self, output, div, freq, rdiv=0):
         pll = self.pll[output]
-        mul = int(freq * div // self.crystal) # mul = 15+0/1048575 to 90
-        denom = int(self.crystal * 100)
-        num = int(freq * div * 100) % denom
+        crystal = self.crystal
+        vco = freq * div * 2**rdiv
+        mul = int(vco // crystal) # mul = 15+0/1048575 to 90
+        denom = int(crystal * 100)
+        num = int(vco * 100) % denom
         max_denom = self.SI5351_MULTISYNTH_C_MAX
         num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
         setup_pll(pll, mul=mul, num=num, denom=denom)
         if self.div[output] != div:
-            self.setup_multisynth(output, pll=pll, div=div)
+            self.setup_multisynth(output, pll=pll, div=div, num=0, denom=1, rdiv=rdiv)
             self.init_multisynth(output, integer_mode=True)
             self.div[output] = div
 

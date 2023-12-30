@@ -60,16 +60,14 @@ print(f"""\
 # silicon5351
 
 A MicroPython and CircuitPython library for controlling the SI5351 chip.
-The library also supports generating quadrature output
-using the phase offset feature of the chip.
 
 # Introduction
 
 The file silicon5351.py contains the actual si5351 library. Inside the library
 is the SI5351\_I2C class for controlling the Silicon Labs SI5351x range of chips.
 
-This class also supports the quadrature ouptut feature of the chip.  The lowest 
-frequency which can be outputted in quadrature is limited by the chip hardware 
+This class also supports the quadrature output feature of the chip.  The lowest 
+frequency that can be generated in quadrature is limited by the chip hardware 
 to clock's PLL frequency divided by 128.
 
 ## Example
@@ -77,7 +75,6 @@ to clock's PLL frequency divided by 128.
 ```python
 {run("cat example.py")}
 ```
-
 The library calls the PLL soft reset function 
 of the chip whenever the MultiSynth whole number portion
 of the divisor changes or is intitialized.
