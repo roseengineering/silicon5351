@@ -19,8 +19,14 @@ SI5351_DIS_STATE_NEVER_DISABLED   = 3
 
 
 class SI5351_I2C:
+    SI5351_MULTISYNTH_RX_MAX       = 7
+    SI5351_MULTISYNTH_C_MAX        = 1048575 # fits in [19:0] or 2**20-1
+
+    SI5351_MULTISYNTH_DIV_MIN      = 8       # 4 and 6 only allowed in integer mode
     SI5351_MULTISYNTH_DIV_MAX      = 2048    # DIV_MAX = 128 for quadrature
-    SI5351_MULTISYNTH_C_MAX        = 1048575
+
+    SI5351_MULTISYNTH_MUL_MIN      = 15
+    SI5351_MULTISYNTH_MUL_MAX      = 90
 
     # SI5351_REGISTER_PLL_RESET
     SI5351_PLL_RESET_A             = (1<<5)
@@ -261,12 +267,19 @@ class SI5351_I2C:
         """
         pll = self.pll[output]
         vco = self.vco[pll]
-        for rdiv in range(8): 
-            if freq > vco / self.SI5351_MULTISYNTH_DIV_MAX: break
+        for rdiv in range(self.SI5351_MULTISYNTH_RX_MAX+1): 
+            if freq * self.SI5351_MULTISYNTH_DIV_MAX > vco: break
             freq *= 2
-        div = int(vco // freq) # div = 4, 6, 8+0/1048575 to 2048
-        denom = int(freq * 100)
-        num = int(vco * 100) % denom
+        else:
+            raise ValueError('maximum Rx divisor exceeded')
+        vco = int(10 * vco)
+        denom = int(10 * freq)
+        num = vco % denom
+        div = vco // denom # div = 4,6,[8+0/1048575 to 2048)
+        if (div < self.SI5351_MULTISYNTH_DIV_MIN or 
+            div >= self.SI5351_MULTISYNTH_DIV_MAX):
+            raise ValueError('multisynth divisor out of range')
+
         max_denom = self.SI5351_MULTISYNTH_C_MAX
         num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
         self.setup_multisynth(output, pll=pll, div=div, num=num, denom=denom, rdiv=rdiv)
@@ -281,9 +294,14 @@ class SI5351_I2C:
         pll = self.pll[output]
         crystal = self.crystal
         vco = freq * div * 2**rdiv
-        mul = int(vco // crystal) # mul = 15+0/1048575 to 90
-        denom = int(crystal * 100)
-        num = int(vco * 100) % denom
+        vco = int(10 * vco)
+        denom = int(10 * crystal)
+        num = vco % denom
+        mul = vco // denom # mul = 15+0/1048575 to 90
+        if (mul < self.SI5351_MULTISYNTH_MUL_MIN or 
+            mul >= self.SI5351_MULTISYNTH_MUL_MAX):
+            raise ValueError('pll multiplier out of range')
+
         max_denom = self.SI5351_MULTISYNTH_C_MAX
         num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
         setup_pll(pll, mul=mul, num=num, denom=denom)
