@@ -293,6 +293,8 @@ class SI5351_I2C:
     def set_freq_fixeddiv(self, output, freq, div, rdiv=0):
         pll = self.pll[output]
         crystal = self.crystal
+        if type(div) is not int or div < 4:
+            raise ValueError('bad multisynth divisor')
         vco = freq * div * 2**rdiv
         vco = int(10 * vco)
         denom = int(10 * crystal)
