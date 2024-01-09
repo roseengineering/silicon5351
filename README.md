@@ -56,11 +56,11 @@ derived off a particular PLL and be coherrent with respect to each other.
 <code>class silicon5351.<b>SI5351\_I2C</b>(self, i2c, crystal, load=3, address=96)</code>  
 Instantiate the SI5353\_I2C class.  All clock outputs
 (clkouts) will be shutdown and disabled.  
-**i2c** The MicroPython or CircuitPython I2C object.    
-**crystal** The crystal frequency in Hz.    
-**load** The load capacitance of crystal.  Must use one of   
+**i2c** The MicroPython or CircuitPython I2C object.  
+**crystal** The crystal frequency in Hz.  
+**load** The load capacitance of crystal.  Must use one of 
 the global constants defined in the library for this value.  
-**address** The I2C address of the si5351 chip.  
+**address** The I2C address of the si5351 chip.
 
 Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the following public properties and methods:   
 
@@ -68,22 +68,22 @@ Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the foll
 Initialize the given clock output (clkout).
 This method must be called before using set\_freq\_fixedpll() on
 the output.  
-**output** The number of the clock output (clkout) to initialize     
-**pll** The number of the PLL to select. (0=PLLA, 1=PLLB)    
-**invert** Invert the output.    
-**quadrature** Invert the output and also enable quadrature   
+**output** The number of the clock output (clkout) to initialize   
+**pll** The number of the PLL to select. (0=PLLA, 1=PLLB)  
+**invert** Invert the output.  
+**quadrature** Invert the output and also enable quadrature 
 logic in the library.  
-**drive\_strength** The drive strength in current to use   
+**drive\_strength** The drive strength in current to use 
 for the output. Must use one of the global constants defined
 in the library for this value.
 
 <code>SI5351\_I2C.<b>enable\_output</b>(self, output)</code>  
 Enable the given clock output (clkout).  
-**output** The clock output (clkout) to enable.  
+**output** The clock output (clkout) to enable.
 
 <code>SI5351\_I2C.<b>disable\_output</b>(self, output)</code>  
 Disable the given clock output (clkout).  
-**output** The clock output (clkout) to disable.  
+**output** The clock output (clkout) to disable.
 
 <code>SI5351\_I2C.<b>disabled\_states</b>(self, output, state)</code>  
 Set the state of the clock outputs (clkout) when one
@@ -91,39 +91,39 @@ or more clocks are disabled either in software or
 as a result of the output enable (OEB) pin going active.
 The possible disabled states for an output are low voltage, high
 voltage, high impedance, and never disabled.  
-**output** The clock output (clkout) to set the disabled state for.    
-**state** The disabled state to set for the clock   
+**output** The clock output (clkout) to set the disabled state for.  
+**state** The disabled state to set for the clock 
 output (clkout).  Must use one of the global constants defined in
 the library for this value.
 
 <code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
 Disable the output enable (OEB) pin for the given
 clock outputs (clkouts).  
-**mask** A bit mask of the clock outputs (clkouts) to disable   
+**mask** A bit mask of the clock outputs (clkouts) to disable 
 output enable (OEB) pin support for.
 
 <code>SI5351\_I2C.<b>setup\_pll</b>(self, pll, mul, num=0, denom=1)</code>  
 Set the frequency for the given PLL.
 The PLL frequency is set to the frequency given by
 (mul + num / denom) times the crystal frequency.  
-**pll** The number of the PLL to select. (0=PLLA, 1=PLLB)    
-**mul** The whole number to multiply the crystal frequency   
+**pll** The number of the PLL to select. (0=PLLA, 1=PLLB)  
+**mul** The whole number to multiply the crystal frequency 
 by.  This value must be in the range [15-90].  
-**num** The numerator to multiply the crystal frequency   
+**num** The numerator to multiply the crystal frequency 
 by. This value must be in the range [0-1048574].  
-**denom** The denominator to multiply the crystal frequency by.  
+**denom** The denominator to multiply the crystal frequency by.
 This value must be in the range [1-1048575].
 
 <code>SI5351\_I2C.<b>setup\_multisynth</b>(self, output, div, num=0, denom=1, rdiv=0)</code>    
-**output** The number of the clock output (clkout) to   
+**output** The number of the clock output (clkout) to 
 set the frequency for.  
-**div** The whole number divisor to set the multisynth to.  
+**div** The whole number divisor to set the multisynth to.
 This value must be in the range [4-2047]  
-**num** The numerator to divide the pll frequency by.   
+**num** The numerator to divide the pll frequency by. 
 This value must be in the range [0-1048574].  
-**denom** The denominator to divide the pll frequency by.   
+**denom** The denominator to divide the pll frequency by. 
 This value must be in the range [1-1048575].  
-**rdiv** The Rx divisor in log base 2 for additional vco division.  
+**rdiv** The Rx divisor in log base 2 for additional vco division.
 
 <code>SI5351\_I2C.<b>set\_freq\_fixedpll</b>(self, output, freq)</code>  
 Set the frequency for the clock output (clkout) by changing
@@ -131,9 +131,9 @@ the multisynth divisors.  The pll frequency is unchanged.
 Must call init\_clock() and setup\_pll() before calling this method.
 The maximum frequency that can be generated is the vco frequency
 divided by 8.  
-**output** The number of the clock output (clkout) to   
+**output** The number of the clock output (clkout) to 
 set the frequency for.  
-**freq** The frequency in Hz to set the clock output (clkout) to.  
+**freq** The frequency in Hz to set the clock output (clkout) to.
 
 <code>SI5351\_I2C.<b>set\_freq\_fixedms</b>(self, output, freq)</code>  
 Set the clock output (clkout) to the requested frequency by
@@ -143,8 +143,8 @@ and setup\_multisynth() before calling this method to set the pll number to use.
 minimum frequency that can be generated is the minimum frequency
 of the pll divided by div.  The maximum frequency that can be
 generated is the maximum frequency of the pll divided by div.  
-**output** The number of the clock output (clkout) to   
+**output** The number of the clock output (clkout) to 
 set the frequency for.  
-**freq** The frequency in Hz to set the clock output (clkout) to.  
+**freq** The frequency in Hz to set the clock output (clkout) to.
 
 

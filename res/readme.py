@@ -41,10 +41,10 @@ def generate_docs(package, data=None, classname=None, text=[]):
 
                 if m_param:
                     text[-1] += '  '
-                    text.append(f'**{m_param.group(1)}** {m_param.group(2)}  ')
+                    text.append(f'**{m_param.group(1)}** {m_param.group(2)}')
                 elif m_return:
                     text[-1] += '  '
-                    text.append(f'**returns** {m_return.group(1)}  ')
+                    text.append(f'**returns** {m_return.group(1)}')
                 else:
                     text.append(ln.strip())
 
