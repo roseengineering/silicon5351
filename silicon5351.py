@@ -132,6 +132,22 @@ class SI5351_I2C:
 
     ###
 
+    def disabled_states(self, output, state):
+        if output < 4:
+            reg = self.SI5351_REGISTER_DIS_STATE_1
+        else:
+            reg = self.SI5351_REGISTER_DIS_STATE_2
+            output -= 4
+        value = self.read(reg)
+        s = [ (value >> (n * 2)) & 0x3 for n in range(4) ]
+        s[output] = state
+        self.write(reg, s[3] << 6 | s[2] << 4 | s[1] << 2 | s[0])
+
+    def disable_oeb(self, mask):
+        self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
+
+    ###
+
     def __init__(self, 
             i2c,
             crystal, 
@@ -202,35 +218,6 @@ class SI5351_I2C:
         """
         mask = self.read(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL)
         self.write(self.SI5351_REGISTER_OUTPUT_ENABLE_CONTROL, mask | (1 << output))
-
-    def disabled_states(self, output, state):
-        """Set the state of the clock outputs (clkout) when one 
-        or more clocks are disabled either in software or 
-        as a result of the output enable (OEB) pin going active.
-        The possible disabled states for an output are low voltage, high
-        voltage, high impedance, and never disabled.
-        :param output The clock output (clkout) to set the disabled state for.
-        :param state The disabled state to set for the clock 
-        output (clkout).  Must use one of the global constants defined in 
-        the library for this value.
-        """
-        if output < 4:
-            reg = self.SI5351_REGISTER_DIS_STATE_1
-        else:
-            reg = self.SI5351_REGISTER_DIS_STATE_2
-            output -= 4
-        value = self.read(reg)
-        s = [ (value >> (n * 2)) & 0x3 for n in range(4) ]
-        s[output] = state
-        self.write(reg, s[3] << 6 | s[2] << 4 | s[1] << 2 | s[0])
-
-    def disable_oeb(self, mask):
-        """Disable the output enable (OEB) pin for the given 
-        clock outputs (clkouts).
-        :param mask A bit mask of the clock outputs (clkouts) to disable 
-        output enable (OEB) pin support for.
-        """
-        self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
 
     def setup_pll(self, pll, mul, num=0, denom=1):
         """Set the frequency for the given PLL.

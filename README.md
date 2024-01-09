@@ -85,23 +85,6 @@ Enable the given clock output (clkout).
 Disable the given clock output (clkout).  
 **output** The clock output (clkout) to disable.
 
-<code>SI5351\_I2C.<b>disabled\_states</b>(self, output, state)</code>  
-Set the state of the clock outputs (clkout) when one
-or more clocks are disabled either in software or
-as a result of the output enable (OEB) pin going active.
-The possible disabled states for an output are low voltage, high
-voltage, high impedance, and never disabled.  
-**output** The clock output (clkout) to set the disabled state for.  
-**state** The disabled state to set for the clock 
-output (clkout).  Must use one of the global constants defined in
-the library for this value.
-
-<code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
-Disable the output enable (OEB) pin for the given
-clock outputs (clkouts).  
-**mask** A bit mask of the clock outputs (clkouts) to disable 
-output enable (OEB) pin support for.
-
 <code>SI5351\_I2C.<b>setup\_pll</b>(self, pll, mul, num=0, denom=1)</code>  
 Set the frequency for the given PLL.
 The PLL frequency is set to the frequency given by
