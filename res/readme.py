@@ -36,8 +36,8 @@ def generate_docs(package, data=None, classname=None, text=[]):
                     text.append(f'<code>{classname}.<b>{k}</b>{signature}</code>  ')
             inbody = True
             for ln in fn.__doc__.strip().splitlines():
-                m_param = re.search(':param\s+(\S+)\s+(.*)', ln)
-                m_return = re.search(':return\s+(.*)', ln)
+                m_param = re.search(r':param\s+(\S+)\s+(.*)', ln)
+                m_return = re.search(r':return\s+(.*)', ln)
                 if m_param or m_return:
                     if inbody: text[-1] += '  '
                     inbody = False
@@ -64,7 +64,7 @@ A MicroPython and CircuitPython library for controlling the SI5351 chip.
 # Introduction
 
 The file silicon5351.py contains the actual si5351 library. Inside the library
-is the SI5351\_I2C class for controlling the Silicon Labs SI5351x range of chips.
+is the SI5351\\_I2C class for controlling the Silicon Labs SI5351x range of chips.
 
 This class also supports the quadrature output feature of the chip.  The lowest 
 frequency that can be generated in quadrature is limited by the chip hardware 
