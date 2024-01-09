@@ -76,8 +76,6 @@ class SI5351_I2C:
     def write(self, register, value):
         self.write_bulk(register, [value])
 
-    ###
-
     def write_config(self, reg, whole, num, denom, rdiv):
         P1 = 128 * whole + int(128.0 * num / denom) - 512
         P2 = 128 * num - denom * int(128.0 * num / denom)
@@ -92,12 +90,6 @@ class SI5351_I2C:
             (P2 & 0x0FF00) >> 8,
             (P2 & 0x000FF) ])
 
-    def setup_multisynth(self, output, pll, div, num, denom, rdiv):
-        if output == 0: reg = self.SI5351_REGISTER_MULTISYNTH0_PARAMETERS_1
-        if output == 1: reg = self.SI5351_REGISTER_MULTISYNTH1_PARAMETERS_1
-        if output == 2: reg = self.SI5351_REGISTER_MULTISYNTH2_PARAMETERS_1
-        self.write_config(reg, whole=div, num=num, denom=denom, rdiv=rdiv)
-
     def set_phase(self, output, div):
         self.write(self.SI5351_REGISTER_CLK0_PHOFF + output, int(div) & 0xFF)
 
@@ -105,6 +97,20 @@ class SI5351_I2C:
         if pll == 0: value = self.SI5351_PLL_RESET_A 
         if pll == 1: value = self.SI5351_PLL_RESET_B
         self.write(self.SI5351_REGISTER_PLL_RESET, value)
+
+    def init_multisynth(self, output, integer_mode):
+        pll = self.pll[output]
+        value = self.SI5351_CLK_INPUT_MULTISYNTH_N
+        value |= self.drive_strength[output]
+        if integer_mode:
+            value |= SI5351_CLK_INTEGER_MODE
+        if self.invert[output] or self.quadrature[output]:
+            value |= self.SI5351_CLK_INVERT
+        if pll == 0: 
+            value |= self.SI5351_CLK_PLL_SELECT_A
+        if pll == 1: 
+            value |= self.SI5351_CLK_PLL_SELECT_B
+        self.write(self.SI5351_REGISTER_CLK0_CONTROL + output, value)
 
     def approximate_fraction(self, n, d, max_denom):
         # https://github.com/python/cpython/blob/master/Lib/fractions.py
@@ -124,19 +130,7 @@ class SI5351_I2C:
             n = p1; d = q1
         return n, d
 
-    def init_multisynth(self, output, integer_mode=False):
-        pll = self.pll[output]
-        value = self.SI5351_CLK_INPUT_MULTISYNTH_N
-        value |= self.drive_strength[output]
-        if integer_mode:
-            value |= SI5351_CLK_INTEGER_MODE
-        if self.invert[output] or self.quadrature[output]:
-            value |= self.SI5351_CLK_INVERT
-        if pll == 0: 
-            value |= self.SI5351_CLK_PLL_SELECT_A
-        if pll == 1: 
-            value |= self.SI5351_CLK_PLL_SELECT_B
-        self.write(self.SI5351_REGISTER_CLK0_CONTROL + output, value)
+    ###
 
     def __init__(self, 
             i2c,
@@ -147,7 +141,7 @@ class SI5351_I2C:
         (clkouts) will be shutdown and disabled.
         :param i2c The MicroPython or CircuitPython I2C object.
         :param crystal The crystal frequency in Hz.
-        :param load The load capacitance of crystal.  Must use one of \
+        :param load The load capacitance of crystal.  Must use one of 
         the global constants defined in the library for this value.
         :param address The I2C address of the si5351 chip. 
         """
@@ -183,10 +177,10 @@ class SI5351_I2C:
         :param output The number of the clock output (clkout) to initialize 
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
         :param invert Invert the output.
-        :param quadrature Invert the output and also enable quadrature \
+        :param quadrature Invert the output and also enable quadrature 
         logic in the library.
-        :param drive_strength The drive strength in current to use \
-        for the output. Must use one of the global constants defined \
+        :param drive_strength The drive strength in current to use 
+        for the output. Must use one of the global constants defined 
         in the library for this value.
         """
         self.pll[output] = pll
@@ -216,8 +210,8 @@ class SI5351_I2C:
         The possible disabled states for an output are low voltage, high
         voltage, high impedance, and never disabled.
         :param output The clock output (clkout) to set the disabled state for.
-        :param state The disabled state to set for the clock \
-        output (clkout).  Must use one of the global constants defined in \
+        :param state The disabled state to set for the clock 
+        output (clkout).  Must use one of the global constants defined in 
         the library for this value.
         """
         if output < 4:
@@ -233,7 +227,7 @@ class SI5351_I2C:
     def disable_oeb(self, mask):
         """Disable the output enable (OEB) pin for the given 
         clock outputs (clkouts).
-        :param mask A bit mask of the clock outputs (clkouts) to disable \
+        :param mask A bit mask of the clock outputs (clkouts) to disable 
         output enable (OEB) pin support for.
         """
         self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
@@ -243,12 +237,12 @@ class SI5351_I2C:
         The PLL frequency is set to the frequency given by 
         (mul + num / denom) times the crystal frequency.
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
-        :param mul The whole number to multiply the crystal frequency \
+        :param mul The whole number to multiply the crystal frequency 
         by.  This value must be in the range [15-90].
-        :param num The numerator to multiply the crystal frequency \
-        by. This value must be in the range [0-1048575).
-        :param denom The denominator to multiply the crystal \
-        frequency by. This value must be in the range [1-1048575].
+        :param num The numerator to multiply the crystal frequency 
+        by. This value must be in the range [0-1048574].
+        :param denom The denominator to multiply the crystal frequency by.
+        This value must be in the range [1-1048575].
         """
         vco = self.crystal * (mul + num / denom)
         if pll == 0: 
@@ -258,15 +252,39 @@ class SI5351_I2C:
         self.write_config(reg, whole=mul, num=num, denom=denom, rdiv=0)
         self.vco[pll] = vco
 
+    def setup_multisynth(self, output, div, num=0, denom=1, rdiv=0):
+        """
+        :param output The number of the clock output (clkout) to 
+        set the frequency for.
+        :param div The whole number divisor to set the multisynth to.
+        This value must be in the range [4-2047]
+        :param num The numerator to divide the pll frequency by. 
+        This value must be in the range [0-1048574].
+        :param denom The denominator to divide the pll frequency by. 
+        This value must be in the range [1-1048575].
+        :param rdiv The Rx divisor in log base 2 for additional vco division.
+        """
+        if type(div) is not int or div < 4:
+            raise ValueError('bad multisynth divisor')
+        if output == 0: reg = self.SI5351_REGISTER_MULTISYNTH0_PARAMETERS_1
+        if output == 1: reg = self.SI5351_REGISTER_MULTISYNTH1_PARAMETERS_1
+        if output == 2: reg = self.SI5351_REGISTER_MULTISYNTH2_PARAMETERS_1
+        self.write_config(reg, whole=div, num=num, denom=denom, rdiv=rdiv)
+        if self.div[output] != div:
+            pll = self.pll[output]
+            self.set_phase(output, div if self.quadrature[output] else 0)
+            self.reset_pll(pll) # only after MS setup, syncs all clocks of pll 
+            integer_mode = (num == 0)
+            self.init_multisynth(output, integer_mode=integer_mode)
+            self.div[output] = div
+
     def set_freq_fixedpll(self, output, freq):
         """Set the frequency for the clock output (clkout) by changing
         the multisynth divisors.  The pll frequency is unchanged.
         Must call init_clock() and setup_pll() before calling this method.
-        The minimum frequency that can be generated by this method is
-        the vco frequency divided by 2048.  Divide by an addiitonal 128
-        if the rx divisor is used.  The maximum frequency that can be
-        generated is the vco frequency divided by 8.
-        :param output The number of the clock output (clkout) to \
+        The maximum frequency that can be generated is the vco frequency 
+        divided by 8.
+        :param output The number of the clock output (clkout) to 
         set the frequency for.
         :param freq The frequency in Hz to set the clock output (clkout) to.
         """
@@ -282,39 +300,28 @@ class SI5351_I2C:
         vco = int(10 * vco)
         denom = int(10 * freq)
         num = vco % denom
-        div = vco // denom # div = 4,6,[8+0/1048575 to 2048)
+        div = vco // denom # div = 4,6,[8+0/1048575 to 2047]
         if (div < self.SI5351_MULTISYNTH_DIV_MIN or 
             div >= self.SI5351_MULTISYNTH_DIV_MAX):
             raise ValueError('multisynth divisor out of range')
         max_denom = self.SI5351_MULTISYNTH_C_MAX
         num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
-        # tell hardware
-        self.setup_multisynth(output, pll=pll, div=div, num=num, denom=denom, rdiv=rdiv)
-        if self.div[output] is None:
-            self.init_multisynth(output)
-        if self.div[output] != div:
-            self.set_phase(output, div if self.quadrature[output] else 0)
-            self.reset_pll(pll) # only after MS setup, syncs all clocks of pll 
-            self.div[output] = div
+        self.setup_multisynth(output, div=div, num=num, denom=denom, rdiv=rdiv)
 
-    def set_freq_fixedms(self, output, freq, div, rdiv=0):
+    def set_freq_fixedms(self, output, freq):
         """Set the clock output (clkout) to the requested frequency by 
         changing the pll multiplier value.  The multisynth divisor is
         set to a whole number given by div.  Must call init_clock()
-        before calling this method.  The minimum frequency that can be
-        generated is the minimum frequency of the pll divided by div.  
-        The maximum frequency that can be generated is the maximum 
-        frequency of the pll divided by div.
-        :param output The number of the clock output (clkout) to \
+        and setup_multisynth() before calling this method to set the pll number to use.  The
+        minimum frequency that can be generated is the minimum frequency
+        of the pll divided by div.  The maximum frequency that can be 
+        generated is the maximum frequency of the pll divided by div.
+        :param output The number of the clock output (clkout) to 
         set the frequency for.
         :param freq The frequency in Hz to set the clock output (clkout) to.
-        :param div The whole number divisor to set the multisynth to.
-        :param rdiv The Rx divisor in log base 2 for additional vco division.
         """
         pll = self.pll[output]
         crystal = self.crystal
-        if type(div) is not int or div < 4:
-            raise ValueError('bad multisynth divisor')
         vco = freq * div * 2**rdiv
         # determine mul + num / denom
         vco = int(10 * vco)
@@ -326,11 +333,5 @@ class SI5351_I2C:
             raise ValueError('pll multiplier out of range')
         max_denom = self.SI5351_MULTISYNTH_C_MAX
         num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
-        # tell hardware
-        setup_pll(pll, mul=mul, num=num, denom=denom)
-        if self.div[output] != div:
-            self.setup_multisynth(output, pll=pll, div=div, num=0, denom=1, rdiv=rdiv)
-            self.init_multisynth(output, integer_mode=True)
-            self.div[output] = div
-
+        self.setup_pll(pll, mul=mul, num=num, denom=denom)
 
