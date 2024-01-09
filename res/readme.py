@@ -34,19 +34,20 @@ def generate_docs(package, data=None, classname=None, text=[]):
                     text.append(f'<code>{package}.<b>{k}</b>{signature}</code>  ')
                 else:  # method
                     text.append(f'<code>{classname}.<b>{k}</b>{signature}</code>  ')
-            inbody = True
+
             for ln in fn.__doc__.strip().splitlines():
                 m_param = re.search(r':param\s+(\S+)\s+(.*)', ln)
                 m_return = re.search(r':return\s+(.*)', ln)
-                if m_param or m_return:
-                    if inbody: text[-1] += '  '
-                    inbody = False
+
                 if m_param:
+                    text[-1] += '  '
                     text.append(f'**{m_param.group(1)}** {m_param.group(2)}  ')
                 elif m_return:
+                    text[-1] += '  '
                     text.append(f'**returns** {m_return.group(1)}  ')
                 else:
                     text.append(ln.strip())
+
             text.append('')
             if k == '__init__':
                 text.append(f'Instances of the <code>{package}.<b>{classname}</b></code> class have the following public properties and methods:   ')
