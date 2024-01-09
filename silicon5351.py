@@ -297,7 +297,7 @@ class SI5351_I2C:
             self.reset_pll(pll) # only after MS setup, syncs all clocks of pll 
             self.div[output] = div
 
-    def set_freq_fixeddiv(self, output, freq, div, rdiv=0):
+    def set_freq_fixedms(self, output, freq, div, rdiv=0):
         """Set the clock output (clkout) to the requested frequency by 
         changing the pll multiplier value.  The multisynth divisor is
         set to a whole number given by div.  Must call init_clock()

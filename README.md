@@ -115,7 +115,7 @@ generated is the vco frequency divided by 8.
 **output** The number of the clock output (clkout) to         set the frequency for.  
 **freq** The frequency in Hz to set the clock output (clkout) to.  
 
-<code>SI5351\_I2C.<b>set\_freq\_fixeddiv</b>(self, output, freq, div, rdiv=0)</code>  
+<code>SI5351\_I2C.<b>set\_freq\_fixedms</b>(self, output, freq, div, rdiv=0)</code>  
 Set the clock output (clkout) to the requested frequency by
 changing the pll multiplier value.  The multisynth divisor is
 set to a whole number given by div.  Must call init\_clock()
