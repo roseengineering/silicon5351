@@ -38,7 +38,6 @@ def generate_docs(package, data=None, classname=None, text=[]):
             for ln in fn.__doc__.strip().splitlines():
                 m_param = re.search(r':param\s+(\S+)\s+(.*)', ln)
                 m_return = re.search(r':return\s+(.*)', ln)
-
                 if m_param:
                     text[-1] += '  '
                     text.append(f'**{m_param.group(1)}** {m_param.group(2)}')

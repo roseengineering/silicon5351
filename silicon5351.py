@@ -240,7 +240,7 @@ class SI5351_I2C:
         self.vco[pll] = vco
 
     def setup_multisynth(self, output, div, num=0, denom=1, rdiv=0):
-        """
+        """Set the multisynth divisor of the PLL frequency.
         :param output The number of the clock output (clkout) to 
         set the frequency for.
         :param div The whole number divisor to set the multisynth to.

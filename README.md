@@ -97,7 +97,8 @@ by. This value must be in the range [0-1048574].
 **denom** The denominator to multiply the crystal frequency by.
 This value must be in the range [1-1048575].
 
-<code>SI5351\_I2C.<b>setup\_multisynth</b>(self, output, div, num=0, denom=1, rdiv=0)</code>    
+<code>SI5351\_I2C.<b>setup\_multisynth</b>(self, output, div, num=0, denom=1, rdiv=0)</code>  
+Set the multisynth divisor of the PLL frequency.  
 **output** The number of the clock output (clkout) to 
 set the frequency for.  
 **div** The whole number divisor to set the multisynth to.
