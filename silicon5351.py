@@ -173,7 +173,8 @@ class SI5351_I2C:
             drive_strength=SI5351_CLK_DRIVE_STRENGTH_8MA):
         """Initialize the given clock output (clkout).
         This method must be called before using set_freq_fixedpll() on 
-        the output.
+        the output.  It makes no calls to the Si5351.  It only
+        intializes the output clock's state within the library.
         :param output The number of the clock output (clkout) to initialize 
         :param pll The number of the PLL to select. (0=PLLA, 1=PLLB)
         :param invert Invert the output.

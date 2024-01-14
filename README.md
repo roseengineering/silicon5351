@@ -67,7 +67,8 @@ Instances of the <code>silicon5351.<b>SI5351\_I2C</b></code> class have the foll
 <code>SI5351\_I2C.<b>init\_clock</b>(self, output, pll, quadrature=False, invert=False, drive\_strength=3)</code>  
 Initialize the given clock output (clkout).
 This method must be called before using set\_freq\_fixedpll() on
-the output.  
+the output.  It makes no calls to the Si5351.  It only
+intializes the output clock's state within the library.  
 **output** The number of the clock output (clkout) to initialize   
 **pll** The number of the PLL to select. (0=PLLA, 1=PLLB)  
 **invert** Invert the output.  
