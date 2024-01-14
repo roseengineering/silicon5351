@@ -122,13 +122,30 @@ set the frequency for.
 <code>SI5351\_I2C.<b>set\_freq\_fixedms</b>(self, output, freq)</code>  
 Set the clock output (clkout) to the requested frequency by
 changing the pll multiplier value.  The multisynth divisor is
-set to a whole number given by div.  Must call init\_clock()
-and setup\_multisynth() before calling this method to set the pll number to use.  The
+set to a whole number given by div.  Must call init\_clock() and
+setup\_multisynth() before calling this method to set the.  The
 minimum frequency that can be generated is the minimum frequency
 of the pll divided by div.  The maximum frequency that can be
 generated is the maximum frequency of the pll divided by div.  
 **output** The number of the clock output (clkout) to 
 set the frequency for.  
 **freq** The frequency in Hz to set the clock output (clkout) to.
+
+<code>SI5351\_I2C.<b>disabled\_states</b>(self, output, state)</code>  
+Set the state of the clock outputs (clkout) when one
+or more clocks are disabled either in software or
+as a result of the output enable (OEB) pin going active.
+The possible disabled states for an output are low voltage, high
+voltage, high impedance, and never disabled.  
+**output** The clock output (clkout) to set the disabled state for.  
+**state** The disabled state to set for the clock 
+output (clkout).  Must use one of the global constants defined in
+the library for this value.
+
+<code>SI5351\_I2C.<b>disable\_oeb</b>(self, mask)</code>  
+Disable the output enable (OEB) pin for the given
+clock outputs (clkouts).  
+**mask** A bit mask of the clock outputs (clkouts) to disable 
+output enable (OEB) pin support for.
 
 

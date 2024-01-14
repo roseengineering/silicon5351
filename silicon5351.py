@@ -132,22 +132,6 @@ class SI5351_I2C:
 
     ###
 
-    def disabled_states(self, output, state):
-        if output < 4:
-            reg = self.SI5351_REGISTER_DIS_STATE_1
-        else:
-            reg = self.SI5351_REGISTER_DIS_STATE_2
-            output -= 4
-        value = self.read(reg)
-        s = [ (value >> (n * 2)) & 0x3 for n in range(4) ]
-        s[output] = state
-        self.write(reg, s[3] << 6 | s[2] << 4 | s[1] << 2 | s[0])
-
-    def disable_oeb(self, mask):
-        self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
-
-    ###
-
     def __init__(self, 
             i2c,
             crystal, 
@@ -277,13 +261,15 @@ class SI5351_I2C:
         """
         pll = self.pll[output]
         vco = self.vco[pll]
+
         # determine rdiv
         for rdiv in range(self.SI5351_MULTISYNTH_RX_MAX+1): 
             if freq * self.SI5351_MULTISYNTH_DIV_MAX > vco: break
             freq *= 2
         else:
             raise ValueError('maximum Rx divisor exceeded')
-        # determine div + num / denom
+
+        # determine divisor: div + num / denom
         vco = int(10 * vco)
         denom = int(10 * freq)
         num = vco % denom
@@ -298,8 +284,8 @@ class SI5351_I2C:
     def set_freq_fixedms(self, output, freq):
         """Set the clock output (clkout) to the requested frequency by 
         changing the pll multiplier value.  The multisynth divisor is
-        set to a whole number given by div.  Must call init_clock()
-        and setup_multisynth() before calling this method to set the pll number to use.  The
+        set to a whole number given by div.  Must call init_clock() and
+        setup_multisynth() before calling this method to set the.  The
         minimum frequency that can be generated is the minimum frequency
         of the pll divided by div.  The maximum frequency that can be 
         generated is the maximum frequency of the pll divided by div.
@@ -310,7 +296,8 @@ class SI5351_I2C:
         pll = self.pll[output]
         crystal = self.crystal
         vco = freq * div * 2**rdiv
-        # determine mul + num / denom
+
+        # determine multiplicand: mul + num / denom
         vco = int(10 * vco)
         denom = int(10 * crystal)
         num = vco % denom
@@ -321,4 +308,36 @@ class SI5351_I2C:
         max_denom = self.SI5351_MULTISYNTH_C_MAX
         num, denom = self.approximate_fraction(num, denom, max_denom=max_denom)
         self.setup_pll(pll, mul=mul, num=num, denom=denom)
+
+    ###
+
+    def disabled_states(self, output, state):
+        """Set the state of the clock outputs (clkout) when one 
+        or more clocks are disabled either in software or 
+        as a result of the output enable (OEB) pin going active.
+        The possible disabled states for an output are low voltage, high
+        voltage, high impedance, and never disabled.
+        :param output The clock output (clkout) to set the disabled state for.
+        :param state The disabled state to set for the clock 
+        output (clkout).  Must use one of the global constants defined in 
+        the library for this value.
+        """
+        if output < 4:
+            reg = self.SI5351_REGISTER_DIS_STATE_1
+        else:
+            reg = self.SI5351_REGISTER_DIS_STATE_2
+            output -= 4
+        value = self.read(reg)
+        s = [ (value >> (n * 2)) & 0x3 for n in range(4) ]
+        s[output] = state
+        self.write(reg, s[3] << 6 | s[2] << 4 | s[1] << 2 | s[0])
+
+    def disable_oeb(self, mask):
+        """Disable the output enable (OEB) pin for the given 
+        clock outputs (clkouts).
+        :param mask A bit mask of the clock outputs (clkouts) to disable 
+        output enable (OEB) pin support for.
+        """
+        self.write(self.SI5351_REGISTER_OEB_ENABLE_CONTROL, mask & 0xFF)
+
 
