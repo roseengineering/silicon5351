@@ -252,10 +252,8 @@ class SI5351_I2C:
 
     def set_freq_fixedpll(self, output, freq):
         """Set the frequency for the clock output (clkout) by changing
-        the multisynth divisors.  The pll frequency is unchanged.
+        the multisynth divisors.
         Must call init_clock() and setup_pll() before calling this method.
-        The maximum frequency that can be generated is the vco frequency 
-        divided by 8.
         :param output The number of the clock output (clkout) to 
         set the frequency for.
         :param freq The frequency in Hz to set the clock output (clkout) to.
@@ -284,12 +282,8 @@ class SI5351_I2C:
 
     def set_freq_fixedms(self, output, freq):
         """Set the clock output (clkout) to the requested frequency by 
-        changing the pll multiplier value.  The multisynth divisor is
-        set to a whole number given by div.  Must call init_clock() and
-        setup_multisynth() before calling this method to set the.  The
-        minimum frequency that can be generated is the minimum frequency
-        of the pll divided by div.  The maximum frequency that can be 
-        generated is the maximum frequency of the pll divided by div.
+        changing the pll multiplier value.  Must call init_clock() and
+        setup_multisynth() before calling this method.
         :param output The number of the clock output (clkout) to 
         set the frequency for.
         :param freq The frequency in Hz to set the clock output (clkout) to.

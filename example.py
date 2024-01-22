@@ -3,8 +3,8 @@ from silicon5351 import SI5351_I2C
 import sys
 if sys.implementation.name == 'circuitpython':
     import board, busio
-    # i2c = busio.I2C(board.SCL, board.SDA) # XIAO RP2040
-    i2c = busio.I2C(board.GP5, board.GP4)   # PICO
+    # i2c = busio.I2C(scl=board.SCL, sda=board.SDA) # XIAO RP2040
+    i2c = busio.I2C(scl=board.GP5, sda=board.GP4)   # PICO
     while not i2c.try_lock():
         pass
 else:

@@ -20,8 +20,8 @@ from silicon5351 import SI5351_I2C
 import sys
 if sys.implementation.name == 'circuitpython':
     import board, busio
-    # i2c = busio.I2C(board.SCL, board.SDA) # XIAO RP2040
-    i2c = busio.I2C(board.GP5, board.GP4)   # PICO
+    # i2c = busio.I2C(scl=board.SCL, sda=board.SDA) # XIAO RP2040
+    i2c = busio.I2C(scl=board.GP5, sda=board.GP4)   # PICO
     while not i2c.try_lock():
         pass
 else:
@@ -112,22 +112,16 @@ This value must be in the range [1-1048575].
 
 <code>SI5351\_I2C.<b>set\_freq\_fixedpll</b>(self, output, freq)</code>  
 Set the frequency for the clock output (clkout) by changing
-the multisynth divisors.  The pll frequency is unchanged.
-Must call init\_clock() and setup\_pll() before calling this method.
-The maximum frequency that can be generated is the vco frequency
-divided by 8.  
+the multisynth divisors.
+Must call init\_clock() and setup\_pll() before calling this method.  
 **output** The number of the clock output (clkout) to 
 set the frequency for.  
 **freq** The frequency in Hz to set the clock output (clkout) to.
 
 <code>SI5351\_I2C.<b>set\_freq\_fixedms</b>(self, output, freq)</code>  
 Set the clock output (clkout) to the requested frequency by
-changing the pll multiplier value.  The multisynth divisor is
-set to a whole number given by div.  Must call init\_clock() and
-setup\_multisynth() before calling this method to set the.  The
-minimum frequency that can be generated is the minimum frequency
-of the pll divided by div.  The maximum frequency that can be
-generated is the maximum frequency of the pll divided by div.  
+changing the pll multiplier value.  Must call init\_clock() and
+setup\_multisynth() before calling this method.  
 **output** The number of the clock output (clkout) to 
 set the frequency for.  
 **freq** The frequency in Hz to set the clock output (clkout) to.
